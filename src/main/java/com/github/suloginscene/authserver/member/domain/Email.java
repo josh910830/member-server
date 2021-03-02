@@ -18,4 +18,10 @@ public class Email {
         this.email = email;
     }
 
+
+    @Override
+    public String toString() {
+        return email;
+    }
+
 }

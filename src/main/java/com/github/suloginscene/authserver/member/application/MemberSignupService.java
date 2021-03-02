@@ -21,6 +21,7 @@ public class MemberSignupService {
 
     public Long signup(SignupCommand command) {
         Email email = command.getEmail();
+        checkDuplicated(email);
 
         Password password = command.getPassword();
         password.encode(passwordEncoder);
@@ -29,6 +30,12 @@ public class MemberSignupService {
         Member saved = memberRepository.save(created);
 
         return saved.getId();
+    }
+
+    private void checkDuplicated(Email email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new DuplicateEmailException(email);
+        }
     }
 
 }
