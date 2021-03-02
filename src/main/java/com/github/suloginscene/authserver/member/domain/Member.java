@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.domain;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Member {
 
     @Id @GeneratedValue
+    @Getter
     private Long id;
 
     private Email email;
