@@ -7,6 +7,7 @@ import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.value.Emails;
 import com.github.suloginscene.authserver.testing.value.Passwords;
+import com.github.suloginscene.authserver.testing.value.UnknownClientProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -41,7 +43,7 @@ public class AuthServerTest {
 
 
     @Test
-    void authServer_withValidClient_returnsAccessToken() throws Exception {
+    void authServer_withKnownClient_returnsAccessToken() throws Exception {
         repositoryProxy.given(new Member(Emails.VALID, Passwords.ENCODED));
 
         ResultActions when = mockMvc.perform(
@@ -55,6 +57,56 @@ public class AuthServerTest {
         then.andDo(document("access_token"));
     }
 
-    // TODO unhappy path
+    @Test
+    void authServer_withUnknownClient_returns401() throws Exception {
+        repositoryProxy.given(new Member(Emails.VALID, Passwords.ENCODED));
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithClientBasic(URL, new UnknownClientProperties())
+                        .param("username", Emails.VALID.get())
+                        .param("password", Passwords.VALID.get())
+                        .param("grant_type", "password"));
+
+        when.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void authServer_withNonExistentUsername_returns400() throws Exception {
+        repositoryProxy.given(new Member(Emails.VALID, Passwords.ENCODED));
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithClientBasic(URL, clientProperties)
+                        .param("username", Emails.INVALID.get())
+                        .param("password", Passwords.VALID.get())
+                        .param("grant_type", "password"));
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void authServer_withWrongPassword_returns400() throws Exception {
+        repositoryProxy.given(new Member(Emails.VALID, Passwords.ENCODED));
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithClientBasic(URL, clientProperties)
+                        .param("username", Emails.VALID.get())
+                        .param("password", Passwords.INVALID.get())
+                        .param("grant_type", "password"));
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void authServer_withUnsupportedGrantType_returns400() throws Exception {
+        repositoryProxy.given(new Member(Emails.VALID, Passwords.ENCODED));
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithClientBasic(URL, clientProperties)
+                        .param("username", Emails.VALID.get())
+                        .param("password", Passwords.VALID.get())
+                        .param("grant_type", "unsupported"));
+
+        when.andExpect(status().isBadRequest());
+    }
 
 }
