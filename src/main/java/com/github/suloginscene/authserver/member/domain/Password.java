@@ -19,10 +19,14 @@ public class Password {
         this.password = password;
     }
 
-
     public Password encoded(PasswordEncoder passwordEncoder) {
         String encoded = passwordEncoder.encode(password);
         return new Password(encoded);
+    }
+
+
+    public String get() {
+        return password;
     }
 
 }

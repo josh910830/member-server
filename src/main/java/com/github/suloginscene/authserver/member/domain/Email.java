@@ -19,6 +19,11 @@ public class Email {
     }
 
 
+    public String get() {
+        return email;
+    }
+
+
     @Override
     public String toString() {
         return email;
