@@ -5,6 +5,7 @@ import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import com.github.suloginscene.authserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberSignupService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public Long signup(SignupCommand command) {
         Email email = command.getEmail();
+
         Password password = command.getPassword();
+        password.encode(passwordEncoder);
 
         Member created = new Member(email, password);
         Member saved = memberRepository.save(created);

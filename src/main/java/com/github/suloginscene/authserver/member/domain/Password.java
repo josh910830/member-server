@@ -1,6 +1,7 @@
 package com.github.suloginscene.authserver.member.domain;
 
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Embeddable;
 
@@ -16,6 +17,11 @@ public class Password {
 
     public Password(String password) {
         this.password = password;
+    }
+
+
+    public void encode(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 
 }
