@@ -7,6 +7,7 @@ import com.github.suloginscene.authserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +25,7 @@ public class MemberRestController {
 
 
     @PostMapping
-    ResponseEntity<Void> signup(SignupRequest request) {
+    ResponseEntity<Void> signup(@RequestBody SignupRequest request) {
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
 
