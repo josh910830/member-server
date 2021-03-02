@@ -1,9 +1,9 @@
 package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.Emails;
-import com.github.suloginscene.authserver.testing.Passwords;
-import com.github.suloginscene.authserver.testing.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.value.Emails;
+import com.github.suloginscene.authserver.testing.value.Passwords;
+import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

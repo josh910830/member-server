@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.testing;
+package com.github.suloginscene.authserver.testing.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

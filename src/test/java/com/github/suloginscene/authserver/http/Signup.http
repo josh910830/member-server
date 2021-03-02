@@ -1,0 +1,7 @@
+POST localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "password"
+}

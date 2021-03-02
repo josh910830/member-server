@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.testing;
+package com.github.suloginscene.authserver.testing.api;
 
 import org.springframework.boot.test.autoconfigure.restdocs.RestDocsMockMvcConfigurationCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;

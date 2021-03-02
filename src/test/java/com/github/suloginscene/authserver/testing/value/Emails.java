@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.testing;
+package com.github.suloginscene.authserver.testing.value;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 
