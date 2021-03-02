@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.application;
 
+import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.Emails;
 import com.github.suloginscene.authserver.testing.Passwords;
 import com.github.suloginscene.authserver.testing.RepositoryProxy;
@@ -48,7 +49,7 @@ class MemberSignupServiceTest {
 
     @Test
     void signup_onDuplicate_throwsException() {
-        memberSignupService.signup(validSignupCommand());
+        repositoryProxy.given(new Member(Emails.VALID, Passwords.VALID));
 
         Executable action = () -> memberSignupService.signup(validSignupCommand());
 
