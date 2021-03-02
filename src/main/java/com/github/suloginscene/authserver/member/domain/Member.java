@@ -12,10 +12,10 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
+@Getter
 public class Member {
 
     @Id @GeneratedValue
-    @Getter
     private Long id;
 
     private Email email;
