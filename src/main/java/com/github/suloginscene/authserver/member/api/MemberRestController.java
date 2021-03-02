@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,7 +26,7 @@ public class MemberRestController {
 
 
     @PostMapping
-    ResponseEntity<Void> signup(@RequestBody SignupRequest request) {
+    ResponseEntity<Void> signup(@RequestBody @Valid SignupRequest request) {
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
 
