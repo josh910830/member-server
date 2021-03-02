@@ -20,8 +20,9 @@ public class Password {
     }
 
 
-    public void encode(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(password);
+    public Password encoded(PasswordEncoder passwordEncoder) {
+        String encoded = passwordEncoder.encode(password);
+        return new Password(encoded);
     }
 
 }

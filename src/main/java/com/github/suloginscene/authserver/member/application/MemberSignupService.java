@@ -24,7 +24,7 @@ public class MemberSignupService {
         checkDuplicated(email);
 
         Password password = command.getPassword();
-        password.encode(passwordEncoder);
+        password = password.encoded(passwordEncoder);
 
         Member created = new Member(email, password);
         Member saved = memberRepository.save(created);
