@@ -5,6 +5,7 @@ import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
+@DisplayName("회원찾기 서비스 (UserDetailsService)")
 class MemberDetailsServiceTest {
 
     @Autowired MemberDetailsService memberDetailsService;
@@ -40,6 +42,7 @@ class MemberDetailsServiceTest {
 
 
     @Test
+    @DisplayName("정상 - 멤버어댑터 반환")
     void loadByUsername_onExistent_returnsUser() {
         repositoryProxy.given(member);
 
@@ -49,6 +52,7 @@ class MemberDetailsServiceTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 사용자 - 오류 발생")
     void loadByUsername_onNonExistent_throwsException() {
         Executable action = () -> memberDetailsService.loadUserByUsername(email);
 

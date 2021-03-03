@@ -8,6 +8,7 @@ import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -25,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs @Import(RestDocsConfig.class)
-public class AuthServerTest {
+@DisplayName("인증 API (@EnableAuthorizationServer)")
+public class AuthApiTest {
 
     static final String URL = "/oauth/token";
 
@@ -53,7 +55,8 @@ public class AuthServerTest {
 
 
     @Test
-    void authServer_withKnownClient_returnsAccessToken() throws Exception {
+    @DisplayName("정상 - 액세스토큰 발급")
+    void authServer_onSuccess_returnsAccessToken() throws Exception {
         repositoryProxy.given(member);
 
         ResultActions when = mockMvc.perform(
@@ -68,6 +71,7 @@ public class AuthServerTest {
     }
 
     @Test
+    @DisplayName("모르는 클라이언트 - 401")
     void authServer_withUnknownClient_returns401() throws Exception {
         repositoryProxy.given(member);
 
@@ -89,6 +93,7 @@ public class AuthServerTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 사용자 - 400")
     void authServer_withNonExistentUsername_returns400() throws Exception {
         repositoryProxy.given(member);
 
@@ -102,6 +107,7 @@ public class AuthServerTest {
     }
 
     @Test
+    @DisplayName("잘못된 비밀번호 - 400")
     void authServer_withWrongPassword_returns400() throws Exception {
         repositoryProxy.given(member);
 
@@ -115,6 +121,7 @@ public class AuthServerTest {
     }
 
     @Test
+    @DisplayName("지원되지 않는 승인유형 - 400")
     void authServer_withUnsupportedGrantType_returns400() throws Exception {
         repositoryProxy.given(member);
 
