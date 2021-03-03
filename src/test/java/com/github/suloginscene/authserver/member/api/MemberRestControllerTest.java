@@ -101,6 +101,17 @@ class MemberRestControllerTest {
         when.andExpect(status().isBadRequest());
     }
 
-    // TODO signup_onDuplicate_returns400()
+
+    @Test
+    @DisplayName("POST 실패(이메일 중복) - 400")
+    void signup_onDuplicate_returns400() throws Exception {
+        repositoryProxy.given(DefaultMembers.create());
+
+        SignupRequest request = new SignupRequest(email, password);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
+
+        when.andExpect(status().isBadRequest());
+    }
 
 }
