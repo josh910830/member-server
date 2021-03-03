@@ -7,7 +7,7 @@ import org.springframework.dao.DuplicateKeyException;
 public class DuplicateEmailException extends DuplicateKeyException {
 
     public DuplicateEmailException(Email email) {
-        super(email.toString());
+        super(email.get());
     }
 
 }

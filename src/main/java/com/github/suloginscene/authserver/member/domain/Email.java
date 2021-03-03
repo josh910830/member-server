@@ -23,10 +23,4 @@ public class Email {
         return email;
     }
 
-
-    @Override
-    public String toString() {
-        return email;
-    }
-
 }
