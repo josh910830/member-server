@@ -63,7 +63,7 @@ public class JwtRestControllerTest {
 
         ResultActions then = when.andExpect(jsonPath("access_token").exists());
 
-        then.andDo(document("access_token"));
+        then.andDo(document("jwt"));
     }
 
     @Test
