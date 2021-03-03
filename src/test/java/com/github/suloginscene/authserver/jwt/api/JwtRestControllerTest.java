@@ -5,6 +5,7 @@ import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.authserver.testing.api.MatchSupporter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -28,10 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("JWT API")
 public class JwtRestControllerTest {
 
-    static final String URL = "/jwt";
+    static final String URL = linkTo(JwtRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
+    @Autowired MatchSupporter matchSupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
     Member member;
@@ -53,7 +55,7 @@ public class JwtRestControllerTest {
 
 
     @Test
-    @DisplayName("정상 - JWT 발급")
+    @DisplayName("정상 - aud 싣은 JWT 발급")
     void authServer_onSuccess_returnsAccessToken() throws Exception {
         repositoryProxy.given(member);
 
@@ -61,7 +63,8 @@ public class JwtRestControllerTest {
         ResultActions when = mockMvc.perform(
                 requestSupporter.postWithJson(URL, jwtRequest));
 
-        ResultActions then = when.andExpect(jsonPath("access_token").exists());
+        ResultActions then = when.andExpect(
+                matchSupporter.jwtAudienceIs(member.getId()));
 
         then.andDo(document("jwt"));
     }

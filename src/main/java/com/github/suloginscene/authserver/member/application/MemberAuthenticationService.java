@@ -19,12 +19,14 @@ public class MemberAuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public void authenticate(AuthenticationCommand command) {
+    public Long authenticate(AuthenticationCommand command) {
         Email email = command.getEmail();
         Member member = findMember(email);
 
         Password password = command.getPassword();
         member.checkPassword(password, passwordEncoder);
+
+        return member.getId();
     }
 
     private Member findMember(Email email) {

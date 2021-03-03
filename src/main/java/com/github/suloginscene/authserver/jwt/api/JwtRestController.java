@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.jwt.api;
 
+import com.github.suloginscene.authserver.jwt.application.JwtFactory;
 import com.github.suloginscene.authserver.member.application.AuthenticationCommand;
 import com.github.suloginscene.authserver.member.application.MemberAuthenticationService;
 import com.github.suloginscene.authserver.member.domain.Email;
@@ -18,18 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class JwtRestController {
 
     private final MemberAuthenticationService memberAuthenticationService;
+    private final JwtFactory jwtFactory;
 
 
     @PostMapping
-    ResponseEntity<Void> issueJwt(@RequestBody JwtRequest request) {
+    ResponseEntity<String> issueJwt(@RequestBody JwtRequest request) {
         Email email = new Email(request.getUsername());
         Password password = new Password(request.getPassword());
 
         AuthenticationCommand command = new AuthenticationCommand(email, password);
-        memberAuthenticationService.authenticate(command);
+        Long id = memberAuthenticationService.authenticate(command);
 
-        // TODO implement issue jwt
-        return ResponseEntity.ok().build();
+        String jwt = jwtFactory.create(id);
+        return ResponseEntity.ok().body(jwt);
     }
 
 }
