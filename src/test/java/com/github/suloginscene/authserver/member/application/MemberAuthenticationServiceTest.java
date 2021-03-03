@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
-@DisplayName("회원인증 서비스")
+@DisplayName("회원 인증 서비스")
 class MemberAuthenticationServiceTest {
 
     @Autowired MemberAuthenticationService memberAuthenticationService;

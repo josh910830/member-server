@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.then;
 
 
 @SpringBootTest
-@DisplayName("회원가입 서비스")
+@DisplayName("회원 가입 서비스")
 class MemberSignupServiceTest {
 
     @Autowired MemberSignupService memberSignupService;
