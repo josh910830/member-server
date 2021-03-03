@@ -1,5 +1,7 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.jwt.application.JwtFactory;
+import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
@@ -31,16 +33,19 @@ class MemberRestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
+    @Autowired JwtFactory jwtFactory;
     @Autowired RepositoryProxy repositoryProxy;
 
     String email;
     String password;
+    Member member;
 
 
     @BeforeEach
     void setup() {
         email = DefaultMembers.EMAIL;
         password = DefaultMembers.RAW_PASSWORD;
+        member = DefaultMembers.create();
     }
 
     @AfterEach
@@ -105,7 +110,7 @@ class MemberRestControllerTest {
     @Test
     @DisplayName("POST 실패(이메일 중복) - 400")
     void signup_onDuplicate_returns400() throws Exception {
-        repositoryProxy.given(DefaultMembers.create());
+        repositoryProxy.given(member);
 
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
@@ -113,5 +118,24 @@ class MemberRestControllerTest {
 
         when.andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    @DisplayName("[임시] GET 성공 - 200")
+    void getMember() throws Exception {
+        repositoryProxy.given(member);
+        String jwt = jwtFactory.create(member.getId());
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+
+        ResultActions then = when.andExpect(status().isOk());
+
+        then.andDo(document("get"));
+    }
+
+    // TODO onExpiredJwt
+
+    // TODO handle malformedJwtException
 
 }

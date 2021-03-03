@@ -30,6 +30,7 @@ class JwtFactoryTest {
 
 
     @Test
+    @DisplayName("정상 - aud 싣은 JWT 발급")
     void create_onSuccess_tokenHasAudience() {
         String jwt = jwtFactory.create(userId);
 

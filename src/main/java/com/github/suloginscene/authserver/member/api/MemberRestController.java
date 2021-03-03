@@ -6,6 +6,8 @@ import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,14 @@ public class MemberRestController {
 
         URI location = linkTo(this.getClass()).slash(id).toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<?> getMember(@PathVariable Long id) {
+
+        // TODO impl for myPage
+
+        return ResponseEntity.ok().build();
     }
 
 }

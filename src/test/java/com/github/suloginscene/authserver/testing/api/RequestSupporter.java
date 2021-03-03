@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 
@@ -20,6 +21,10 @@ public class RequestSupporter {
     public MockHttpServletRequestBuilder postWithJson(String url, Object body) throws JsonProcessingException {
         String json = objectMapper.writeValueAsString(body);
         return post(url).contentType(APPLICATION_JSON).content(json);
+    }
+
+    public MockHttpServletRequestBuilder getWithJwt(String url, String jwt) {
+        return get(url).header("X-AUTH-TOKEN", jwt);
     }
 
 }
