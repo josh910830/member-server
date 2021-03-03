@@ -2,9 +2,9 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
-import com.github.suloginscene.authserver.testing.value.Emails;
-import com.github.suloginscene.authserver.testing.value.Passwords;
+import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,15 @@ class MemberDetailsServiceTest {
 
     @Autowired RepositoryProxy repositoryProxy;
 
+    Member member;
+    String email;
+
+
+    @BeforeEach
+    void setup() {
+        member = DefaultMembers.create();
+        email = DefaultMembers.EMAIL;
+    }
 
     @AfterEach
     void clear() {
@@ -32,16 +41,16 @@ class MemberDetailsServiceTest {
 
     @Test
     void loadByUsername_onExistent_returnsUser() {
-        repositoryProxy.given(new Member(Emails.VALID, Passwords.VALID));
+        repositoryProxy.given(member);
 
-        UserDetails userDetails = memberDetailsService.loadUserByUsername(Emails.VALID.get());
+        UserDetails userDetails = memberDetailsService.loadUserByUsername(email);
 
         assertThat(userDetails).isInstanceOf(MemberAdapter.class);
     }
 
     @Test
     void loadByUsername_onNonExistent_throwsException() {
-        Executable action = () -> memberDetailsService.loadUserByUsername(Emails.VALID.get());
+        Executable action = () -> memberDetailsService.loadUserByUsername(email);
 
         assertThrows(UsernameNotFoundException.class, action);
     }

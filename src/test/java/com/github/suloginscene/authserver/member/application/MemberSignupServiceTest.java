@@ -1,10 +1,11 @@
 package com.github.suloginscene.authserver.member.application;
 
-import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.value.Emails;
-import com.github.suloginscene.authserver.testing.value.Passwords;
+import com.github.suloginscene.authserver.member.domain.Email;
+import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,15 @@ class MemberSignupServiceTest {
 
     @Autowired RepositoryProxy repositoryProxy;
 
+    SignupCommand command;
+
+
+    @BeforeEach
+    void setup() {
+        String email = DefaultMembers.EMAIL;
+        String password = DefaultMembers.RAW_PASSWORD;
+        command = new SignupCommand(new Email(email), new Password(password));
+    }
 
     @AfterEach
     void clear() {
@@ -35,30 +45,25 @@ class MemberSignupServiceTest {
 
     @Test
     void signup_onSuccess_returnsId() {
-        Long id = memberSignupService.signup(validSignupCommand());
+        Long id = memberSignupService.signup(command);
 
         assertThat(id).isNotNull();
     }
 
     @Test
     void signup_onSuccess_encodePassword() {
-        memberSignupService.signup(validSignupCommand());
+        memberSignupService.signup(command);
 
         then(passwordEncoder).should().encode(anyString());
     }
 
     @Test
     void signup_onDuplicate_throwsException() {
-        repositoryProxy.given(new Member(Emails.VALID, Passwords.VALID));
+        repositoryProxy.given(DefaultMembers.create());
 
-        Executable action = () -> memberSignupService.signup(validSignupCommand());
+        Executable action = () -> memberSignupService.signup(command);
 
         assertThrows(DuplicateEmailException.class, action);
-    }
-
-
-    private SignupCommand validSignupCommand() {
-        return new SignupCommand(Emails.VALID, Passwords.VALID);
     }
 
 }

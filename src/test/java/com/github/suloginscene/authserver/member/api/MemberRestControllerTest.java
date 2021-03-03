@@ -1,11 +1,11 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.testing.value.Emails;
-import com.github.suloginscene.authserver.testing.value.Passwords;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
+import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -25,12 +25,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs @Import(RestDocsConfig.class)
 class MemberRestControllerTest {
 
+    static final String URL = linkTo(MemberRestController.class).toString();
+
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
-    private static final String URL = linkTo(MemberRestController.class).toString();
+    String email;
+    String password;
 
+
+    @BeforeEach
+    void setup() {
+        email = DefaultMembers.EMAIL;
+        password = DefaultMembers.RAW_PASSWORD;
+    }
 
     @AfterEach
     void clear() {
@@ -40,8 +49,9 @@ class MemberRestControllerTest {
 
     @Test
     void signup_onSuccess_returns201() throws Exception {
-        SignupRequest request = new SignupRequest(Emails.VALID.get(), Passwords.VALID.get());
-        ResultActions when = mockMvc.perform(requestSupporter.postWithJson(URL, request));
+        SignupRequest request = new SignupRequest(email, password);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
 
         ResultActions then = when.andExpect(status().isCreated());
 
@@ -50,34 +60,40 @@ class MemberRestControllerTest {
 
     @Test
     void signup_withNullEmail_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(null, Passwords.VALID.get());
-        ResultActions when = mockMvc.perform(requestSupporter.postWithJson(URL, request));
+        SignupRequest request = new SignupRequest(null, password);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
 
         when.andExpect(status().isBadRequest());
     }
 
     @Test
     void signup_withNullPassword_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(Emails.VALID.get(), null);
-        ResultActions when = mockMvc.perform(requestSupporter.postWithJson(URL, request));
+        SignupRequest request = new SignupRequest(email, null);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
 
         when.andExpect(status().isBadRequest());
     }
 
     @Test
     void signup_withInvalidEmail_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(Emails.INVALID.get(), Passwords.VALID.get());
-        ResultActions when = mockMvc.perform(requestSupporter.postWithJson(URL, request));
+        SignupRequest request = new SignupRequest("notEmail", password);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
 
         when.andExpect(status().isBadRequest());
     }
 
     @Test
     void signup_withInvalidPassword_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(Emails.VALID.get(), Passwords.INVALID.get());
-        ResultActions when = mockMvc.perform(requestSupporter.postWithJson(URL, request));
+        SignupRequest request = new SignupRequest(email, "short");
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, request));
 
         when.andExpect(status().isBadRequest());
     }
+
+    // TODO signup_onDuplicate_returns400()
 
 }
