@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.member.domain.MemberAuthenticationException;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;

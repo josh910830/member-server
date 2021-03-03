@@ -25,8 +25,8 @@ public class Password {
     }
 
 
-    public String get() {
-        return password;
+    boolean matches(Password rawPassword, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(rawPassword.password, password);
     }
 
 }

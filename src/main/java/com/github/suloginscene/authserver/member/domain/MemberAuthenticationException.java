@@ -1,6 +1,5 @@
-package com.github.suloginscene.authserver.member.application;
+package com.github.suloginscene.authserver.member.domain;
 
-import com.github.suloginscene.authserver.member.domain.Email;
 import org.springframework.security.core.AuthenticationException;
 
 

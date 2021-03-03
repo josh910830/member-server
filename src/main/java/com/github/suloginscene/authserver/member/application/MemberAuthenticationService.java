@@ -24,19 +24,12 @@ public class MemberAuthenticationService {
         Member member = findMember(email);
 
         Password password = command.getPassword();
-        checkPassword(email, member, password);
+        member.checkPassword(password, passwordEncoder);
     }
 
     private Member findMember(Email email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email.get()));
-    }
-
-    private void checkPassword(Email email, Member member, Password password) {
-        boolean matches = passwordEncoder.matches(password.get(), member.getPassword().get());
-        if (!matches) {
-            throw new MemberAuthenticationException(email);
-        }
     }
 
 }
