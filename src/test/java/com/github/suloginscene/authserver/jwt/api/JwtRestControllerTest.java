@@ -1,6 +1,5 @@
-package com.github.suloginscene.authserver.authserver;
+package com.github.suloginscene.authserver.jwt.api;
 
-import com.github.suloginscene.authserver.config.ClientProperties;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
@@ -26,14 +25,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs @Import(RestDocsConfig.class)
-@DisplayName("인증 API (@EnableAuthorizationServer)")
-public class AuthApiTest {
+@DisplayName("JWT API")
+public class JwtRestControllerTest {
 
-    static final String URL = "/oauth/token";
+    static final String URL = "/jwt";
 
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
-    @Autowired ClientProperties clientProperties;
     @Autowired RepositoryProxy repositoryProxy;
 
     Member member;
@@ -55,15 +53,13 @@ public class AuthApiTest {
 
 
     @Test
-    @DisplayName("정상 - 액세스토큰 발급")
+    @DisplayName("정상 - JWT 발급")
     void authServer_onSuccess_returnsAccessToken() throws Exception {
         repositoryProxy.given(member);
 
+        JwtRequest jwtRequest = new JwtRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithClientBasic(URL, clientProperties)
-                        .param("username", email)
-                        .param("password", password)
-                        .param("grant_type", "password"));
+                requestSupporter.postWithJson(URL, jwtRequest));
 
         ResultActions then = when.andExpect(jsonPath("access_token").exists());
 
@@ -71,37 +67,13 @@ public class AuthApiTest {
     }
 
     @Test
-    @DisplayName("모르는 클라이언트 - 401")
-    void authServer_withUnknownClient_returns401() throws Exception {
-        repositoryProxy.given(member);
-
-        ClientProperties unknownClientProperties = createUnknownClientProperties();
-        ResultActions when = mockMvc.perform(
-                requestSupporter.postWithClientBasic(URL, unknownClientProperties)
-                        .param("username", email)
-                        .param("password", password)
-                        .param("grant_type", "password"));
-
-        when.andExpect(status().isUnauthorized());
-    }
-
-    private ClientProperties createUnknownClientProperties() {
-        ClientProperties clientProperties = new ClientProperties();
-        clientProperties.setId("unknown");
-        clientProperties.setSecret("unknown");
-        return clientProperties;
-    }
-
-    @Test
     @DisplayName("존재하지 않는 사용자 - 400")
     void authServer_withNonExistentUsername_returns400() throws Exception {
         repositoryProxy.given(member);
 
+        JwtRequest jwtRequest = new JwtRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithClientBasic(URL, clientProperties)
-                        .param("username", "nonExistent@email.com")
-                        .param("password", password)
-                        .param("grant_type", "password"));
+                requestSupporter.postWithJson(URL, jwtRequest));
 
         when.andExpect(status().isBadRequest());
     }
@@ -111,25 +83,9 @@ public class AuthApiTest {
     void authServer_withWrongPassword_returns400() throws Exception {
         repositoryProxy.given(member);
 
+        JwtRequest jwtRequest = new JwtRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithClientBasic(URL, clientProperties)
-                        .param("username", email)
-                        .param("password", "wrongPassword")
-                        .param("grant_type", "password"));
-
-        when.andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("지원되지 않는 승인유형 - 400")
-    void authServer_withUnsupportedGrantType_returns400() throws Exception {
-        repositoryProxy.given(member);
-
-        ResultActions when = mockMvc.perform(
-                requestSupporter.postWithClientBasic(URL, clientProperties)
-                        .param("username", email)
-                        .param("password", password)
-                        .param("grant_type", "unsupported"));
+                requestSupporter.postWithJson(URL, jwtRequest));
 
         when.andExpect(status().isBadRequest());
     }
