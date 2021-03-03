@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-@ConfigurationProperties(prefix = "client")
+@ConfigurationProperties(prefix = "jwt")
 @Getter @Setter
-public class ClientProperties {
+public class JwtProperties {
 
-    private String id;
     private String secret;
 
 }

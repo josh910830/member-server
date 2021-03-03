@@ -10,7 +10,7 @@ public class App {
     private static final String APPLICATION_LOCATIONS = "spring.config.location="
             + "classpath:application.properties,"
             + "file:/member/application-db.properties,"
-            + "file:/member/application-client.properties";
+            + "file:/member/application-jwt.properties";
 
 
     public static void main(String[] args) {
