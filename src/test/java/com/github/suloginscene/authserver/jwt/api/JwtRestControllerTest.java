@@ -71,7 +71,7 @@ public class JwtRestControllerTest {
     void authServer_withNonExistentUsername_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(email, password);
+        JwtRequest jwtRequest = new JwtRequest("non-existent@email.com", password);
         ResultActions when = mockMvc.perform(
                 requestSupporter.postWithJson(URL, jwtRequest));
 
@@ -83,11 +83,13 @@ public class JwtRestControllerTest {
     void authServer_withWrongPassword_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(email, password);
+        JwtRequest jwtRequest = new JwtRequest(email, "wrongPassword");
         ResultActions when = mockMvc.perform(
                 requestSupporter.postWithJson(URL, jwtRequest));
 
         when.andExpect(status().isBadRequest());
     }
+
+    // TODO validate null
 
 }
