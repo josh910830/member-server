@@ -2,14 +2,11 @@ package com.github.suloginscene.authserver.jwt.application;
 
 import com.github.suloginscene.authserver.config.JwtProperties;
 import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,20 +18,13 @@ class JwtFactoryTest {
     @Autowired JwtFactory jwtFactory;
 
     @Autowired JwtProperties jwtProperties;
-
-    // TODO register bean
-    JwtParser jwtParser;
-
-    String secret;
+    @Autowired JwtParser jwtParser;
 
     Long userId;
 
 
     @BeforeEach
     void setup() {
-        secret = Base64.getEncoder()
-                .encodeToString(jwtProperties.getSecret().getBytes());
-        jwtParser = Jwts.parser().setSigningKey(secret);
         userId = 1L;
     }
 
