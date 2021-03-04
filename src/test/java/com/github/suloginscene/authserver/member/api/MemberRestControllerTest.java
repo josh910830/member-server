@@ -147,10 +147,20 @@ class MemberRestControllerTest {
         when.andExpect(status().isForbidden());
     }
 
+    @Test
+    @DisplayName("GET 실패(리소스 없음) - 404")
+    void getMember_onNonExistent_throwsException() throws Exception {
+        Long nonExistentId = 1L;
+        String jwt = jwtFactory.create(nonExistentId);
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + nonExistentId, jwt));
+
+        when.andExpect(status().isNotFound());
+    }
+
     // TODO onExpiredJwt
 
     // TODO handle malformedJwtException
-
-    // TODO NoSuchElementException
 
 }
