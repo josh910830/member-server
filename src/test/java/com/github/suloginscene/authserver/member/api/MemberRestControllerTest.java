@@ -1,11 +1,14 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.jwt.application.JwtFactory;
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -34,7 +37,7 @@ class MemberRestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
-    @Autowired JwtFactory jwtFactory;
+    @Autowired JwtFactorySupporter jwtFactorySupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
     String email;
@@ -125,7 +128,7 @@ class MemberRestControllerTest {
     @DisplayName("GET 성공 - 200")
     void getMember_onSuccess_returns200() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactory.create(member.getId());
+        String jwt = jwtFactorySupporter.create(member.getId());
 
         ResultActions when = mockMvc.perform(
                 requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
@@ -140,7 +143,7 @@ class MemberRestControllerTest {
     void getMember_withNotOwner_returns403() throws Exception {
         repositoryProxy.given(member);
         Long audience = member.getId() + 1;
-        String jwt = jwtFactory.create(audience);
+        String jwt = jwtFactorySupporter.create(audience);
 
         ResultActions when = mockMvc.perform(
                 requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
@@ -151,8 +154,8 @@ class MemberRestControllerTest {
     @Test
     @DisplayName("GET 실패(리소스 없음) - 404")
     void getMember_onNonExistent_returns404() throws Exception {
-        Long nonExistentId = 1L;
-        String jwt = jwtFactory.create(nonExistentId);
+        Long nonExistentId = Long.MAX_VALUE;
+        String jwt = jwtFactorySupporter.create(nonExistentId);
 
         ResultActions when = mockMvc.perform(
                 requestSupporter.getWithJwt(URL + "/" + nonExistentId, jwt));
@@ -161,19 +164,42 @@ class MemberRestControllerTest {
     }
 
     @Test
-    @DisplayName("GET 실패(만료) - 403")
-    void getMember_withExpiredToken_returns401() throws Exception {
+    @DisplayName("GET 실패(JWT 만료) - 403")
+    void getMember_withExpiredJwt_returns403() throws Exception {
         repositoryProxy.given(member);
-        String jwt = "eyJhbGciOiJIUzI1NiJ9" +
-                ".eyJhdWQiOiIxIiwiaWF0IjoxNjE0ODY1NjM4LCJleHAiOjE2MTQ4NjY0Mzh9" +
-                ".K7R1AaSnoQFdWF-tKdvyRFLdgjohU1TfLgRwISSU5Aw";
+        String jwt = jwtFactorySupporter.expired(member.getId());
 
         ResultActions when = mockMvc.perform(
                 requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
 
-        when.andExpect(status().isForbidden()).andDo(print());
+        when.andExpect(status().isForbidden())
+                .andExpect(content().string(ExpiredJwtException.class.getSimpleName()));
     }
 
-    // TODO handle malformedJwtException
+    @Test
+    @DisplayName("GET 실패(JWT 서명) - 403")
+    void getMember_withInvalidSignature_returns403() throws Exception {
+        repositoryProxy.given(member);
+        String jwt = jwtFactorySupporter.invalid(member.getId());
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+
+        when.andExpect(status().isForbidden())
+                .andExpect(content().string(SignatureException.class.getSimpleName()));
+    }
+
+    @Test
+    @DisplayName("GET 실패(JWT 형식) - 403")
+    void getMember_withMalformedJwt_returns403() throws Exception {
+        repositoryProxy.given(member);
+        String jwt = jwtFactorySupporter.malformed();
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+
+        when.andExpect(status().isForbidden())
+                .andExpect(content().string(MalformedJwtException.class.getSimpleName()));
+    }
 
 }

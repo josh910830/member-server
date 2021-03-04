@@ -3,6 +3,7 @@ package com.github.suloginscene.authserver.config;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,12 +17,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Date;
 
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtSecurityFilter extends GenericFilterBean {
 
     private final JwtParser jwtParser;
@@ -35,7 +38,8 @@ public class JwtSecurityFilter extends GenericFilterBean {
             authenticateByJwt(servletRequest);
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (JwtException e) {
-            sendForbiddenError(servletResponse);
+            log.warn(e.getClass().getSimpleName());
+            sendForbiddenError(servletResponse, e);
         }
     }
 
@@ -64,9 +68,18 @@ public class JwtSecurityFilter extends GenericFilterBean {
         return new UsernamePasswordAuthenticationToken(audience, "", Collections.emptySet());
     }
 
-    private void sendForbiddenError(ServletResponse servletResponse) throws IOException {
+    private void sendForbiddenError(ServletResponse servletResponse, JwtException e) {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        httpServletResponse.sendError(403, "expired jwt");
+        httpServletResponse.setStatus(403);
+        printMessage(httpServletResponse, e.getClass().getSimpleName());
+    }
+
+    private void printMessage(HttpServletResponse httpServletResponse, String message) {
+        try (PrintWriter writer = httpServletResponse.getWriter()) {
+            writer.print(message);
+        } catch (IOException e) {
+            log.error("on print http response - {}", e.getMessage());
+        }
     }
 
 }
