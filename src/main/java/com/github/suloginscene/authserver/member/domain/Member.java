@@ -19,6 +19,7 @@ public class Member {
     @Getter
     private Long id;
 
+    @Getter
     private Email email;
 
     private Password password;

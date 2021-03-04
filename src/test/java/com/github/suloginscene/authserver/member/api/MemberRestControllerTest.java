@@ -121,8 +121,7 @@ class MemberRestControllerTest {
 
 
     @Test
-    // TODO impl
-    @DisplayName("[임시] GET 성공 - 200")
+    @DisplayName("GET 성공 - 200")
     void getMember() throws Exception {
         repositoryProxy.given(member);
         String jwt = jwtFactory.create(member.getId());
@@ -132,7 +131,7 @@ class MemberRestControllerTest {
 
         ResultActions then = when.andExpect(status().isOk());
 
-        then.andDo(document("get"));
+        then.andDo(document("get_member"));
     }
 
     @Test
@@ -151,5 +150,7 @@ class MemberRestControllerTest {
     // TODO onExpiredJwt
 
     // TODO handle malformedJwtException
+
+    // TODO NoSuchElementException
 
 }

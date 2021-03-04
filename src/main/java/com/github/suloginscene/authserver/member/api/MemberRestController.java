@@ -1,6 +1,8 @@
 package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.global.AuthorizationException;
+import com.github.suloginscene.authserver.member.application.MemberFindService;
+import com.github.suloginscene.authserver.member.application.MemberResponse;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.application.SignupCommand;
 import com.github.suloginscene.authserver.member.domain.Email;
@@ -27,6 +29,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 public class MemberRestController {
 
     private final MemberSignupService memberSignupService;
+    private final MemberFindService memberFindService;
 
 
     @PostMapping
@@ -42,14 +45,13 @@ public class MemberRestController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getMember(@PathVariable Long id, @AuthenticationPrincipal String username) {
+    ResponseEntity<MemberResponse> getMember(@PathVariable Long id, @AuthenticationPrincipal String username) {
         Long audience = Long.parseLong(username);
-
         checkOwner(id, audience);
 
-        // TODO find Member
+        MemberResponse memberResponse = memberFindService.findMember(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(memberResponse);
     }
 
     private void checkOwner(Long memberId, Long audience) {
