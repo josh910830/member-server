@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -122,7 +123,7 @@ class MemberRestControllerTest {
 
     @Test
     @DisplayName("GET 성공 - 200")
-    void getMember() throws Exception {
+    void getMember_onSuccess_returns200() throws Exception {
         repositoryProxy.given(member);
         String jwt = jwtFactory.create(member.getId());
 
@@ -136,7 +137,7 @@ class MemberRestControllerTest {
 
     @Test
     @DisplayName("GET 실패(권한) - 403")
-    void getMember_withNotOwner_throwsException() throws Exception {
+    void getMember_withNotOwner_returns403() throws Exception {
         repositoryProxy.given(member);
         Long audience = member.getId() + 1;
         String jwt = jwtFactory.create(audience);
@@ -149,7 +150,7 @@ class MemberRestControllerTest {
 
     @Test
     @DisplayName("GET 실패(리소스 없음) - 404")
-    void getMember_onNonExistent_throwsException() throws Exception {
+    void getMember_onNonExistent_returns404() throws Exception {
         Long nonExistentId = 1L;
         String jwt = jwtFactory.create(nonExistentId);
 
@@ -159,7 +160,19 @@ class MemberRestControllerTest {
         when.andExpect(status().isNotFound());
     }
 
-    // TODO onExpiredJwt
+    @Test
+    @DisplayName("GET 실패(만료) - 403")
+    void getMember_withExpiredToken_returns401() throws Exception {
+        repositoryProxy.given(member);
+        String jwt = "eyJhbGciOiJIUzI1NiJ9" +
+                ".eyJhdWQiOiIxIiwiaWF0IjoxNjE0ODY1NjM4LCJleHAiOjE2MTQ4NjY0Mzh9" +
+                ".K7R1AaSnoQFdWF-tKdvyRFLdgjohU1TfLgRwISSU5Aw";
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+
+        when.andExpect(status().isForbidden()).andDo(print());
+    }
 
     // TODO handle malformedJwtException
 

@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> on(NoSuchElementException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e);
         log.warn(errorResponse.toString());
-        return ResponseEntity.status(NOT_FOUND).body(errorResponse);
+        return ResponseEntity.status(NOT_FOUND).build();
     }
 
 }
