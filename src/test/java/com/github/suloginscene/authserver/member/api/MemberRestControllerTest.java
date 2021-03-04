@@ -121,6 +121,7 @@ class MemberRestControllerTest {
 
 
     @Test
+    // TODO impl
     @DisplayName("[임시] GET 성공 - 200")
     void getMember() throws Exception {
         repositoryProxy.given(member);
@@ -132,6 +133,19 @@ class MemberRestControllerTest {
         ResultActions then = when.andExpect(status().isOk());
 
         then.andDo(document("get"));
+    }
+
+    @Test
+    @DisplayName("GET 실패(권한) - 403")
+    void getMember_withNotOwner_throwsException() throws Exception {
+        repositoryProxy.given(member);
+        Long audience = member.getId() + 1;
+        String jwt = jwtFactory.create(audience);
+
+        ResultActions when = mockMvc.perform(
+                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+
+        when.andExpect(status().isForbidden());
     }
 
     // TODO onExpiredJwt

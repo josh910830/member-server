@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.member.api;
+package com.github.suloginscene.authserver.global;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

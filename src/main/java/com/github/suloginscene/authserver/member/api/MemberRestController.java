@@ -1,11 +1,13 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.global.AuthorizationException;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.application.SignupCommand;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,11 +42,20 @@ public class MemberRestController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getMember(@PathVariable Long id) {
+    ResponseEntity<?> getMember(@PathVariable Long id, @AuthenticationPrincipal String username) {
+        Long audience = Long.parseLong(username);
 
-        // TODO impl for myPage
+        checkOwner(id, audience);
+
+        // TODO find Member
 
         return ResponseEntity.ok().build();
+    }
+
+    private void checkOwner(Long memberId, Long audience) {
+        if (!audience.equals(memberId)) {
+            throw new AuthorizationException(audience, linkTo(this.getClass()).slash(memberId));
+        }
     }
 
 }

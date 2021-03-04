@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.global.ErrorResponse;
 import com.github.suloginscene.authserver.member.application.DuplicateEmailException;
 import com.github.suloginscene.authserver.member.domain.MemberAuthenticationException;
 import lombok.extern.slf4j.Slf4j;
