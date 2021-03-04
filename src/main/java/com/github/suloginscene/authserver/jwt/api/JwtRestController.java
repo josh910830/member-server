@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/jwt")
@@ -23,7 +25,7 @@ public class JwtRestController {
 
 
     @PostMapping
-    ResponseEntity<String> issueJwt(@RequestBody JwtRequest request) {
+    ResponseEntity<String> issueJwt(@RequestBody @Valid JwtRequest request) {
         Email email = new Email(request.getUsername());
         Password password = new Password(request.getPassword());
 

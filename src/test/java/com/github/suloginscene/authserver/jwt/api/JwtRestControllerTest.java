@@ -1,11 +1,11 @@
 package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.testing.api.MatchSupporter;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import com.github.suloginscene.authserver.testing.api.MatchSupporter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -93,6 +93,28 @@ public class JwtRestControllerTest {
         when.andExpect(status().isBadRequest());
     }
 
-    // TODO validate null
+    @Test
+    @DisplayName("이메일 null - 400")
+    void authServer_withNullEmail_returns400() throws Exception {
+        repositoryProxy.given(member);
+
+        JwtRequest jwtRequest = new JwtRequest(null, password);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, jwtRequest));
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("비밀번호 null - 400")
+    void authServer_withNullPassword_returns400() throws Exception {
+        repositoryProxy.given(member);
+
+        JwtRequest jwtRequest = new JwtRequest(email, null);
+        ResultActions when = mockMvc.perform(
+                requestSupporter.postWithJson(URL, jwtRequest));
+
+        when.andExpect(status().isBadRequest());
+    }
 
 }
