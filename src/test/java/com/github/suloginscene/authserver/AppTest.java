@@ -20,8 +20,10 @@ public class AppTest {
     @DisplayName("프로퍼티 로딩 성공 - 필드 not null")
     void loadProperties_onSuccess_fieldsAreNotNull() {
         String jwtSecret = jwtProperties.getSecret();
+        String urls = jwtProperties.getUrls();
 
         assertThat(jwtSecret).isNotNull();
+        assertThat(urls.split(",")).hasSize(2);
     }
 
 }

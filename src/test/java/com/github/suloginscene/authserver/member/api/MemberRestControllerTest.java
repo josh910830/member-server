@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.config.JwtProperties;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
 import com.github.suloginscene.authserver.testing.api.RequestSupporter;
@@ -37,6 +38,7 @@ class MemberRestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired RequestSupporter requestSupporter;
+    @Autowired JwtProperties jwtProperties;
     @Autowired JwtFactorySupporter jwtFactorySupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
@@ -55,6 +57,27 @@ class MemberRestControllerTest {
     @AfterEach
     void clear() {
         repositoryProxy.clear();
+    }
+
+
+    @Test
+    @DisplayName("OPTIONS 성공(CORS) - 200")
+    void options_fromValidOrigin_returns200() throws Exception {
+        String validOrigin = jwtProperties.getUrls().split(",")[0];
+        ResultActions when = mockMvc.perform(
+                requestSupporter.optionsFromCrossOrigin(URL, validOrigin));
+
+        when.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("OPTIONS 실패(CORS) - 403")
+    void options_fromInvalidOrigin_returns403() throws Exception {
+        String invalidOrigin = "http://invalid.com";
+        ResultActions when = mockMvc.perform(
+                requestSupporter.optionsFromCrossOrigin(URL, invalidOrigin));
+
+        when.andExpect(status().isForbidden());
     }
 
 
@@ -109,7 +132,6 @@ class MemberRestControllerTest {
 
         when.andExpect(status().isBadRequest());
     }
-
 
     @Test
     @DisplayName("POST 실패(이메일 중복) - 400")
