@@ -3,7 +3,6 @@ package com.github.suloginscene.authserver.member.api;
 import com.github.suloginscene.authserver.config.JwtProperties;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
-import com.github.suloginscene.authserver.testing.api.RequestSupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
@@ -22,7 +21,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofGet;
+import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
+import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPreflight;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +42,6 @@ class MemberRestControllerTest {
     static final String URL = linkTo(MemberRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired RequestSupporter requestSupporter;
     @Autowired JwtProperties jwtProperties;
     @Autowired JwtFactorySupporter jwtFactorySupporter;
     @Autowired RepositoryProxy repositoryProxy;
@@ -65,7 +69,7 @@ class MemberRestControllerTest {
     void options_fromValidOrigin_returns200() throws Exception {
         String validOrigin = jwtProperties.getUrls().split(",")[0];
         ResultActions when = mockMvc.perform(
-                requestSupporter.optionsFromCrossOrigin(URL, validOrigin));
+                ofPreflight(URL, validOrigin, POST, CONTENT_TYPE, ACCEPT).build());
 
         when.andExpect(status().isOk());
     }
@@ -75,7 +79,7 @@ class MemberRestControllerTest {
     void options_fromInvalidOrigin_returns403() throws Exception {
         String invalidOrigin = "http://invalid.com";
         ResultActions when = mockMvc.perform(
-                requestSupporter.optionsFromCrossOrigin(URL, invalidOrigin));
+                ofPreflight(URL, invalidOrigin, POST).build());
 
         when.andExpect(status().isForbidden());
     }
@@ -86,7 +90,7 @@ class MemberRestControllerTest {
     void signup_onSuccess_returns201() throws Exception {
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         ResultActions then = when.andExpect(status().isCreated());
 
@@ -98,7 +102,7 @@ class MemberRestControllerTest {
     void signup_withNullEmail_returns400() throws Exception {
         SignupRequest request = new SignupRequest(null, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -108,7 +112,7 @@ class MemberRestControllerTest {
     void signup_withNullPassword_returns400() throws Exception {
         SignupRequest request = new SignupRequest(email, null);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -118,7 +122,7 @@ class MemberRestControllerTest {
     void signup_withInvalidEmail_returns400() throws Exception {
         SignupRequest request = new SignupRequest("notEmail", password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -128,7 +132,7 @@ class MemberRestControllerTest {
     void signup_withInvalidPassword_returns400() throws Exception {
         SignupRequest request = new SignupRequest(email, "short");
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -140,7 +144,7 @@ class MemberRestControllerTest {
 
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, request));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -153,7 +157,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.create(member.getId());
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         ResultActions then = when.andExpect(status().isOk());
 
@@ -168,7 +172,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.create(audience);
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden());
     }
@@ -180,7 +184,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.create(nonExistentId);
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + nonExistentId, jwt));
+                ofGet(URL + "/" + nonExistentId).attachJwt(jwt).build());
 
         when.andExpect(status().isNotFound());
     }
@@ -192,7 +196,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.expired(member.getId());
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string(ExpiredJwtException.class.getSimpleName()));
@@ -205,7 +209,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.invalid(member.getId());
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string(SignatureException.class.getSimpleName()));
@@ -218,7 +222,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactorySupporter.malformed();
 
         ResultActions when = mockMvc.perform(
-                requestSupporter.getWithJwt(URL + "/" + member.getId(), jwt));
+                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string(MalformedJwtException.class.getSimpleName()));

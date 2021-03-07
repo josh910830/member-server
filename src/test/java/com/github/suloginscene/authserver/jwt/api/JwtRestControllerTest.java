@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.MatchSupporter;
-import com.github.suloginscene.authserver.testing.api.RequestSupporter;
+import com.github.suloginscene.authserver.testing.api.RequestBuilder;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +33,6 @@ public class JwtRestControllerTest {
     static final String URL = linkTo(JwtRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired RequestSupporter requestSupporter;
     @Autowired MatchSupporter matchSupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
@@ -59,9 +59,9 @@ public class JwtRestControllerTest {
     void authServer_onSuccess_returnsAccessToken() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(email, password);
+        JwtRequest request = new JwtRequest(email, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, jwtRequest));
+                ofPost(URL).attachJson(request).build());
 
         ResultActions then = when.andExpect(
                 matchSupporter.jwtAudienceIs(member.getId()));
@@ -74,9 +74,9 @@ public class JwtRestControllerTest {
     void authServer_withNonExistentUsername_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest("non-existent@email.com", password);
+        JwtRequest request = new JwtRequest("non-existent@email.com", password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, jwtRequest));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -86,9 +86,9 @@ public class JwtRestControllerTest {
     void authServer_withWrongPassword_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(email, "wrongPassword");
+        JwtRequest request = new JwtRequest(email, "wrongPassword");
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, jwtRequest));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -98,9 +98,9 @@ public class JwtRestControllerTest {
     void authServer_withNullEmail_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(null, password);
+        JwtRequest request = new JwtRequest(null, password);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, jwtRequest));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -110,9 +110,9 @@ public class JwtRestControllerTest {
     void authServer_withNullPassword_returns400() throws Exception {
         repositoryProxy.given(member);
 
-        JwtRequest jwtRequest = new JwtRequest(email, null);
+        JwtRequest request = new JwtRequest(email, null);
         ResultActions when = mockMvc.perform(
-                requestSupporter.postWithJson(URL, jwtRequest));
+                ofPost(URL).attachJson(request).build());
 
         when.andExpect(status().isBadRequest());
     }
