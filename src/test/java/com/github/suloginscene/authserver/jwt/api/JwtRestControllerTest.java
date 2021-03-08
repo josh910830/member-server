@@ -2,7 +2,6 @@ package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.MatchSupporter;
-import com.github.suloginscene.authserver.testing.api.RequestBuilder;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs @Import(RestDocsConfig.class)
-@DisplayName("JWT API")
+@DisplayName("JWT 발급 API")
 public class JwtRestControllerTest {
 
     static final String URL = linkTo(JwtRestController.class).toString();

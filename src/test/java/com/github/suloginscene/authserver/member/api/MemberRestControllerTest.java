@@ -1,14 +1,10 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.config.JwtProperties;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
 import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,13 +19,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofGet;
 import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPreflight;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -42,7 +33,6 @@ class MemberRestControllerTest {
     static final String URL = linkTo(MemberRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired JwtProperties jwtProperties;
     @Autowired JwtFactorySupporter jwtFactorySupporter;
     @Autowired RepositoryProxy repositoryProxy;
 
@@ -61,27 +51,6 @@ class MemberRestControllerTest {
     @AfterEach
     void clear() {
         repositoryProxy.clear();
-    }
-
-
-    @Test
-    @DisplayName("OPTIONS 성공(CORS) - 200")
-    void options_fromValidOrigin_returns200() throws Exception {
-        String validOrigin = jwtProperties.getUrls().split(",")[0];
-        ResultActions when = mockMvc.perform(
-                ofPreflight(URL, validOrigin, POST, CONTENT_TYPE, ACCEPT).build());
-
-        when.andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("OPTIONS 실패(CORS) - 403")
-    void options_fromInvalidOrigin_returns403() throws Exception {
-        String invalidOrigin = "http://invalid.com";
-        ResultActions when = mockMvc.perform(
-                ofPreflight(URL, invalidOrigin, POST).build());
-
-        when.andExpect(status().isForbidden());
     }
 
 
@@ -187,45 +156,6 @@ class MemberRestControllerTest {
                 ofGet(URL + "/" + nonExistentId).attachJwt(jwt).build());
 
         when.andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("GET 실패(JWT 만료) - 403")
-    void getMember_withExpiredJwt_returns403() throws Exception {
-        repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.expired(member.getId());
-
-        ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
-
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string(ExpiredJwtException.class.getSimpleName()));
-    }
-
-    @Test
-    @DisplayName("GET 실패(JWT 서명) - 403")
-    void getMember_withInvalidSignature_returns403() throws Exception {
-        repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.invalid(member.getId());
-
-        ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
-
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string(SignatureException.class.getSimpleName()));
-    }
-
-    @Test
-    @DisplayName("GET 실패(JWT 형식) - 403")
-    void getMember_withMalformedJwt_returns403() throws Exception {
-        repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.malformed();
-
-        ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
-
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string(MalformedJwtException.class.getSimpleName()));
     }
 
 }
