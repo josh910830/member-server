@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -31,22 +30,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .mvcMatchers(POST, "/api/members")
-                .mvcMatchers(POST, "/jwt");
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
                 .formLogin().disable()
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS);
 
         http
-                .authorizeRequests().anyRequest().authenticated();
+                .authorizeRequests()
+                .mvcMatchers(POST, "/api/members").permitAll()
+                .mvcMatchers(POST, "/jwt").permitAll()
+                .anyRequest().authenticated();
 
         http
                 .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
