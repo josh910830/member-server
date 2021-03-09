@@ -19,11 +19,8 @@ public class MemberSignupService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public Long signup(SignupCommand command) {
-        Email email = command.getEmail();
+    public Long signup(Email email, Password password) {
         checkDuplicated(email);
-
-        Password password = command.getPassword();
         password = password.encoded(passwordEncoder);
 
         Member created = new Member(email, password);

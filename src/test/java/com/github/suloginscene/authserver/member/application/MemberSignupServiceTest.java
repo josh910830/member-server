@@ -29,14 +29,14 @@ class MemberSignupServiceTest {
 
     @Autowired RepositoryProxy repositoryProxy;
 
-    SignupCommand command;
+    Email email;
+    Password password;
 
 
     @BeforeEach
     void setup() {
-        String email = DefaultMembers.EMAIL;
-        String password = DefaultMembers.RAW_PASSWORD;
-        command = new SignupCommand(new Email(email), new Password(password));
+        email = DefaultMembers.EMAIL;
+        password = DefaultMembers.RAW_PASSWORD;
     }
 
     @AfterEach
@@ -48,7 +48,7 @@ class MemberSignupServiceTest {
     @Test
     @DisplayName("정상 - Id 반환")
     void signup_onSuccess_returnsId() {
-        Long id = memberSignupService.signup(command);
+        Long id = memberSignupService.signup(email, password);
 
         assertThat(id).isNotNull();
     }
@@ -56,7 +56,7 @@ class MemberSignupServiceTest {
     @Test
     @DisplayName("정상 - 패스워드 인코딩")
     void signup_onSuccess_encodePassword() {
-        memberSignupService.signup(command);
+        memberSignupService.signup(email, password);
 
         then(passwordEncoder).should().encode(anyString());
     }
@@ -66,7 +66,7 @@ class MemberSignupServiceTest {
     void signup_onDuplicate_throwsException() {
         repositoryProxy.given(DefaultMembers.create());
 
-        Executable action = () -> memberSignupService.signup(command);
+        Executable action = () -> memberSignupService.signup(email, password);
 
         assertThrows(DuplicateEmailException.class, action);
     }

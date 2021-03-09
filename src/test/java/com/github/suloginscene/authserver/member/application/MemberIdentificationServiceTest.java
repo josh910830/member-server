@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.member.domain.MemberAuthenticationException;
+import com.github.suloginscene.authserver.member.domain.MemberPasswordNotMatchedException;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
@@ -15,21 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
 @DisplayName("회원 인증 서비스")
-class MemberAuthenticationServiceTest {
+class MemberIdentificationServiceTest {
 
-    @Autowired MemberAuthenticationService memberAuthenticationService;
+    @Autowired MemberIdentificationService memberIdentificationService;
 
     @Autowired RepositoryProxy repositoryProxy;
 
     Member member;
-    String email;
-    String password;
+    Email email;
+    Password password;
 
 
     @BeforeEach
@@ -50,10 +50,9 @@ class MemberAuthenticationServiceTest {
     void authenticate_onSuccess_returnsTrue() {
         repositoryProxy.given(member);
 
-        AuthenticationCommand command = new AuthenticationCommand(new Email(email), new Password(password));
-        Executable action = () -> memberAuthenticationService.authenticate(command);
+        Long id = memberIdentificationService.identify(email, password);
 
-        assertDoesNotThrow(action);
+        assertThat(id).isNotNull();
     }
 
     @Test
@@ -61,8 +60,8 @@ class MemberAuthenticationServiceTest {
     void authenticate_withNonExistentEmail_throwsException() {
         repositoryProxy.given(member);
 
-        AuthenticationCommand command = new AuthenticationCommand(new Email("non-existent@email.com"), new Password(password));
-        Executable action = () -> memberAuthenticationService.authenticate(command);
+        Email nonExistent = new Email("non-existent@email.com");
+        Executable action = () -> memberIdentificationService.identify(nonExistent, password);
 
         assertThrows(UsernameNotFoundException.class, action);
     }
@@ -72,10 +71,10 @@ class MemberAuthenticationServiceTest {
     void authenticate_withWrongPassword_throwsException() {
         repositoryProxy.given(member);
 
-        AuthenticationCommand command = new AuthenticationCommand(new Email(email), new Password("wrongPassword"));
-        Executable action = () -> memberAuthenticationService.authenticate(command);
+        Password wrong = new Password("wrongPassword");
+        Executable action = () -> memberIdentificationService.identify(email, wrong);
 
-        assertThrows(MemberAuthenticationException.class, action);
+        assertThrows(MemberPasswordNotMatchedException.class, action);
     }
 
 }

@@ -33,7 +33,7 @@ public class Member {
     public void checkPassword(Password rawPassword, PasswordEncoder passwordEncoder) {
         boolean matches = password.matches(rawPassword, passwordEncoder);
         if (!matches) {
-            throw new MemberAuthenticationException(email);
+            throw new MemberPasswordNotMatchedException(email);
         }
     }
 

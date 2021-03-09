@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.global.ErrorResponse;
 import com.github.suloginscene.authserver.member.application.DuplicateEmailException;
-import com.github.suloginscene.authserver.member.domain.MemberAuthenticationException;
+import com.github.suloginscene.authserver.member.domain.MemberPasswordNotMatchedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,8 +33,8 @@ public class MemberExceptionHandler {
         return badRequestWithLogWarn(errorResponse);
     }
 
-    @ExceptionHandler(MemberAuthenticationException.class)
-    public ResponseEntity<ErrorResponse> on(MemberAuthenticationException e) {
+    @ExceptionHandler(MemberPasswordNotMatchedException.class)
+    public ResponseEntity<ErrorResponse> on(MemberPasswordNotMatchedException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e);
         return badRequestWithLogWarn(errorResponse);
     }

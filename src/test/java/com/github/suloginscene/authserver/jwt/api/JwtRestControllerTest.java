@@ -43,8 +43,8 @@ public class JwtRestControllerTest {
     @BeforeEach
     void setup() {
         member = DefaultMembers.create();
-        email = DefaultMembers.EMAIL;
-        password = DefaultMembers.RAW_PASSWORD;
+        email = DefaultMembers.EMAIL_VALUE;
+        password = DefaultMembers.RAW_PASSWORD_VALUE;
     }
 
     @AfterEach

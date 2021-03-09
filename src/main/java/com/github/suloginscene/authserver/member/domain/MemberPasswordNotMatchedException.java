@@ -3,9 +3,9 @@ package com.github.suloginscene.authserver.member.domain;
 import org.springframework.security.core.AuthenticationException;
 
 
-public class MemberAuthenticationException extends AuthenticationException {
+public class MemberPasswordNotMatchedException extends AuthenticationException {
 
-    public MemberAuthenticationException(Email email) {
+    public MemberPasswordNotMatchedException(Email email) {
         super(email.get());
     }
 

@@ -10,20 +10,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MemberAuthenticationService {
+public class MemberIdentificationService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
 
-    public Long authenticate(AuthenticationCommand command) {
-        Email email = command.getEmail();
+    public Long identify(Email email, Password password) {
         Member member = findMember(email);
-
-        Password password = command.getPassword();
         member.checkPassword(password, passwordEncoder);
 
         return member.getId();

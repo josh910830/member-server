@@ -52,8 +52,8 @@ public class CorsFilterTest {
         validOrigin = jwtProperties.getUrls().split(",")[0];
         invalidOrigin = "http://invalid.com";
 
-        email = DefaultMembers.EMAIL;
-        password = DefaultMembers.RAW_PASSWORD;
+        email = DefaultMembers.EMAIL_VALUE;
+        password = DefaultMembers.RAW_PASSWORD_VALUE;
         member = DefaultMembers.create();
     }
 
