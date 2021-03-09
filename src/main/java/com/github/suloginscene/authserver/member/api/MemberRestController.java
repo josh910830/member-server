@@ -1,6 +1,5 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.global.AuthorizationException;
 import com.github.suloginscene.authserver.member.application.MemberFindService;
 import com.github.suloginscene.authserver.member.application.MemberResponse;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
@@ -45,17 +44,17 @@ public class MemberRestController {
 
     @GetMapping("/{id}")
     ResponseEntity<MemberResponse> getMember(@PathVariable Long id, @AuthenticationPrincipal String username) {
-        Long audience = Long.parseLong(username);
-        checkOwner(id, audience);
+        checkOwner(username, id);
 
         MemberResponse memberResponse = memberFindService.findMember(id);
 
         return ResponseEntity.ok().body(memberResponse);
     }
 
-    private void checkOwner(Long memberId, Long audience) {
+    private void checkOwner(String username, Long memberId) {
+        Long audience = Long.parseLong(username);
         if (!audience.equals(memberId)) {
-            throw new AuthorizationException(audience, linkTo(this.getClass()).slash(memberId));
+            throw new ResourceAccessDeniedException(username, "member", memberId);
         }
     }
 

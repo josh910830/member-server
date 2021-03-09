@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.global;
+package com.github.suloginscene.authserver.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
