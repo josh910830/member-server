@@ -25,9 +25,9 @@ public class RequestBuilder {
 
     public static RequestBuilder ofPreflight(String url, String origin, HttpMethod requestMethod, Object... requestHeaders) {
         return new RequestBuilder(options(url))
-                .attachOrigin(origin)
-                .attachHeader(ACCESS_CONTROL_REQUEST_METHOD, requestMethod)
-                .attachHeader(ACCESS_CONTROL_REQUEST_HEADERS, requestHeaders);
+                .origin(origin)
+                .header(ACCESS_CONTROL_REQUEST_METHOD, requestMethod)
+                .header(ACCESS_CONTROL_REQUEST_HEADERS, requestHeaders);
     }
 
     public static RequestBuilder ofPost(String url) {
@@ -38,20 +38,20 @@ public class RequestBuilder {
         return new RequestBuilder(get(url));
     }
 
-    public RequestBuilder attachJson(Object object) throws JsonProcessingException {
+    public RequestBuilder json(Object object) throws JsonProcessingException {
         String json = OBJECT_MAPPER.writeValueAsString(object);
         return new RequestBuilder(mockHttpServletRequestBuilder.contentType(APPLICATION_JSON).content(json));
     }
 
-    public RequestBuilder attachJwt(String jwt) {
+    public RequestBuilder jwt(String jwt) {
         return new RequestBuilder(mockHttpServletRequestBuilder.header("X-AUTH-TOKEN", jwt));
     }
 
-    public RequestBuilder attachOrigin(String origin) {
+    public RequestBuilder origin(String origin) {
         return new RequestBuilder(mockHttpServletRequestBuilder.header(ORIGIN, origin));
     }
 
-    public RequestBuilder attachHeader(String name, Object... value) {
+    public RequestBuilder header(String name, Object... value) {
         if (value.length == 0) {
             return this;
         }

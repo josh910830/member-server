@@ -59,7 +59,7 @@ class MemberRestControllerTest {
     void signup_onSuccess_returns201() throws Exception {
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         ResultActions then = when.andExpect(status().isCreated());
 
@@ -71,7 +71,7 @@ class MemberRestControllerTest {
     void signup_withNullEmail_returns400() throws Exception {
         SignupRequest request = new SignupRequest(null, password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -81,7 +81,7 @@ class MemberRestControllerTest {
     void signup_withNullPassword_returns400() throws Exception {
         SignupRequest request = new SignupRequest(email, null);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -91,7 +91,7 @@ class MemberRestControllerTest {
     void signup_withInvalidEmail_returns400() throws Exception {
         SignupRequest request = new SignupRequest("notEmail", password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -101,7 +101,7 @@ class MemberRestControllerTest {
     void signup_withInvalidPassword_returns400() throws Exception {
         SignupRequest request = new SignupRequest(email, "short");
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -113,7 +113,7 @@ class MemberRestControllerTest {
 
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).build());
+                ofPost(URL).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -126,7 +126,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         ResultActions then = when.andExpect(status().isOk());
 
@@ -141,7 +141,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactory.of(audience);
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         when.andExpect(status().isForbidden());
     }
@@ -153,7 +153,7 @@ class MemberRestControllerTest {
         String jwt = jwtFactory.of(nonExistentId);
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + nonExistentId).attachJwt(jwt).build());
+                ofGet(URL + "/" + nonExistentId).jwt(jwt).build());
 
         when.andExpect(status().isNotFound());
     }

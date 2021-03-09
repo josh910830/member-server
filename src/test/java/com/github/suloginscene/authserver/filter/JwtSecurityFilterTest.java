@@ -56,7 +56,7 @@ public class JwtSecurityFilterTest {
         String jwt = testJwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         when.andExpect(status().isOk());
     }
@@ -68,7 +68,7 @@ public class JwtSecurityFilterTest {
         String jwt = testJwtFactory.expired(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string("ExpiredJwtException"));
@@ -81,7 +81,7 @@ public class JwtSecurityFilterTest {
         String jwt = testJwtFactory.invalid(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string("SignatureException"));
@@ -94,7 +94,7 @@ public class JwtSecurityFilterTest {
         String jwt = testJwtFactory.malformed();
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).build());
 
         when.andExpect(status().isForbidden())
                 .andExpect(content().string("MalformedJwtException"));

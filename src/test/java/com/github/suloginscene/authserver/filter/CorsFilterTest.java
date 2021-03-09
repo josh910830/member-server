@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofGet;
 import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
 import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPreflight;
+import static com.github.suloginscene.authserver.testing.fixture.DefaultMembers.EMAIL_VALUE;
+import static com.github.suloginscene.authserver.testing.fixture.DefaultMembers.RAW_PASSWORD_VALUE;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -42,8 +44,7 @@ public class CorsFilterTest {
     String validOrigin;
     String invalidOrigin;
 
-    String email;
-    String password;
+    SignupRequest signupRequest;
     Member member;
 
 
@@ -52,8 +53,7 @@ public class CorsFilterTest {
         validOrigin = jwtProperties.getUrls().split(",")[0];
         invalidOrigin = "http://invalid.com";
 
-        email = DefaultMembers.EMAIL_VALUE;
-        password = DefaultMembers.RAW_PASSWORD_VALUE;
+        signupRequest = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         member = DefaultMembers.create();
     }
 
@@ -76,7 +76,7 @@ public class CorsFilterTest {
     @DisplayName("OPTIONS 실패 - 403")
     void options_fromInvalidOrigin_returns403() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofPreflight(URL, invalidOrigin, POST).build());
+                ofPreflight(URL, invalidOrigin, POST, CONTENT_TYPE, ACCEPT).build());
 
         when.andExpect(status().isForbidden());
     }
@@ -85,9 +85,8 @@ public class CorsFilterTest {
     @Test
     @DisplayName("POST 성공 - 201")
     void signup_fromValidOrigin_returns201() throws Exception {
-        SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).attachOrigin(validOrigin).build());
+                ofPost(URL).json(signupRequest).origin(validOrigin).build());
 
         when.andExpect(status().isCreated());
     }
@@ -95,9 +94,8 @@ public class CorsFilterTest {
     @Test
     @DisplayName("POST 실패 - 403")
     void signup_fromInvalidOrigin_returns403() throws Exception {
-        SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
-                ofPost(URL).attachJson(request).attachOrigin(invalidOrigin).build());
+                ofPost(URL).json(signupRequest).origin(invalidOrigin).build());
 
         when.andExpect(status().isForbidden());
     }
@@ -109,7 +107,7 @@ public class CorsFilterTest {
         String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).attachOrigin(validOrigin).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).origin(validOrigin).build());
 
         when.andExpect(status().isOk());
     }
@@ -121,7 +119,7 @@ public class CorsFilterTest {
         String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).attachJwt(jwt).attachOrigin(invalidOrigin).build());
+                ofGet(URL + "/" + member.getId()).jwt(jwt).origin(invalidOrigin).build());
 
         when.andExpect(status().isForbidden());
     }
