@@ -1,12 +1,12 @@
 package com.github.suloginscene.authserver.filter;
 
 import com.github.suloginscene.authserver.config.JwtProperties;
-import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
 import com.github.suloginscene.authserver.member.api.MemberRestController;
 import com.github.suloginscene.authserver.member.api.SignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.jjwthelper.JwtFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

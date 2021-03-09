@@ -38,9 +38,9 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <groupId>com.github.suloginscene</groupId>
+            <artifactId>jjwt-helper</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>

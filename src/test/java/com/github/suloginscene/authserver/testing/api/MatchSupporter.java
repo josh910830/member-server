@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.testing.api;
 
-import com.github.suloginscene.authserver.jjwthelper.JwtReader;
+import com.github.suloginscene.jjwthelper.JwtReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.AssertionErrors;

@@ -1,7 +1,7 @@
 package com.github.suloginscene.authserver.config;
 
-import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
-import com.github.suloginscene.authserver.jjwthelper.JwtReader;
+import com.github.suloginscene.jjwthelper.JwtFactory;
+import com.github.suloginscene.jjwthelper.JwtReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

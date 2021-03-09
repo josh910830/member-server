@@ -1,7 +1,7 @@
 package com.github.suloginscene.authserver.testing.config;
 
-import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
-import com.github.suloginscene.authserver.jjwthelper.TestJwtFactory;
+import com.github.suloginscene.jjwthelper.JwtFactory;
+import com.github.suloginscene.jjwthelper.TestJwtFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
