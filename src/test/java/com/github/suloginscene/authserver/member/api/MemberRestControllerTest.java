@@ -1,8 +1,8 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
-import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
+import com.github.suloginscene.authserver.testing.config.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,7 @@ class MemberRestControllerTest {
     static final String URL = linkTo(MemberRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired JwtFactorySupporter jwtFactorySupporter;
+    @Autowired JwtFactory jwtFactory;
     @Autowired RepositoryProxy repositoryProxy;
 
     String email;
@@ -123,7 +123,7 @@ class MemberRestControllerTest {
     @DisplayName("GET 성공 - 200")
     void getMember_onSuccess_returns200() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.create(member.getId());
+        String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
@@ -138,7 +138,7 @@ class MemberRestControllerTest {
     void getMember_withNotOwner_returns403() throws Exception {
         repositoryProxy.given(member);
         Long audience = member.getId() + 1;
-        String jwt = jwtFactorySupporter.create(audience);
+        String jwt = jwtFactory.of(audience);
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
@@ -150,7 +150,7 @@ class MemberRestControllerTest {
     @DisplayName("GET 실패(리소스 없음) - 404")
     void getMember_onNonExistent_returns404() throws Exception {
         Long nonExistentId = Long.MAX_VALUE;
-        String jwt = jwtFactorySupporter.create(nonExistentId);
+        String jwt = jwtFactory.of(nonExistentId);
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + nonExistentId).attachJwt(jwt).build());

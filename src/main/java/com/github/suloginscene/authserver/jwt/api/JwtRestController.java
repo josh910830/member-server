@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.jwt.api;
 
-import com.github.suloginscene.authserver.jwt.application.JwtFactory;
+import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
 import com.github.suloginscene.authserver.member.application.AuthenticationCommand;
 import com.github.suloginscene.authserver.member.application.MemberAuthenticationService;
 import com.github.suloginscene.authserver.member.domain.Email;
@@ -32,7 +32,7 @@ public class JwtRestController {
         AuthenticationCommand command = new AuthenticationCommand(email, password);
         Long id = memberAuthenticationService.authenticate(command);
 
-        String jwt = jwtFactory.create(id);
+        String jwt = jwtFactory.of(id);
         return ResponseEntity.ok().body(jwt);
     }
 

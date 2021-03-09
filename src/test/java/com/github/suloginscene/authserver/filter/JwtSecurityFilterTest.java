@@ -1,13 +1,11 @@
 package com.github.suloginscene.authserver.filter;
 
+import com.github.suloginscene.authserver.jjwthelper.TestJwtFactory;
 import com.github.suloginscene.authserver.member.api.MemberRestController;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
+import com.github.suloginscene.authserver.testing.config.TestJwtFactoryConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -26,13 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestJwtFactoryConfig.class)
 @DisplayName("JWT 필터")
 public class JwtSecurityFilterTest {
 
     static final String URL = linkTo(MemberRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired JwtFactorySupporter jwtFactorySupporter;
+    @Autowired TestJwtFactory testJwtFactory;
     @Autowired RepositoryProxy repositoryProxy;
 
     Member member;
@@ -53,7 +53,7 @@ public class JwtSecurityFilterTest {
     @DisplayName("정상 - 200")
     void getMember_onSuccess_returns200() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.create(member.getId());
+        String jwt = testJwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
@@ -65,39 +65,39 @@ public class JwtSecurityFilterTest {
     @DisplayName("만료 - 403")
     void getMember_withExpiredJwt_returns403() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.expired(member.getId());
+        String jwt = testJwtFactory.expired(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
-                .andExpect(content().string(ExpiredJwtException.class.getSimpleName()));
+                .andExpect(content().string("ExpiredJwtException"));
     }
 
     @Test
     @DisplayName("서명 - 403")
     void getMember_withInvalidSignature_returns403() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.invalid(member.getId());
+        String jwt = testJwtFactory.invalid(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
-                .andExpect(content().string(SignatureException.class.getSimpleName()));
+                .andExpect(content().string("SignatureException"));
     }
 
     @Test
     @DisplayName("형식 - 403")
     void getMember_withMalformedJwt_returns403() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.malformed();
+        String jwt = testJwtFactory.malformed();
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).build());
 
         when.andExpect(status().isForbidden())
-                .andExpect(content().string(MalformedJwtException.class.getSimpleName()));
+                .andExpect(content().string("MalformedJwtException"));
     }
 
 }

@@ -1,7 +1,7 @@
 package com.github.suloginscene.authserver.config;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
+import com.github.suloginscene.authserver.jjwthelper.InvalidJwtException;
+import com.github.suloginscene.authserver.jjwthelper.JwtReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
-import java.util.Date;
 
 
 @Component
@@ -27,7 +26,7 @@ import java.util.Date;
 @Slf4j
 public class JwtSecurityFilter extends GenericFilterBean {
 
-    private final JwtParser jwtParser;
+    private final JwtReader jwtReader;
 
 
     @Override
@@ -37,16 +36,16 @@ public class JwtSecurityFilter extends GenericFilterBean {
         try {
             authenticateByJwt(servletRequest);
             filterChain.doFilter(servletRequest, servletResponse);
-        } catch (JwtException e) {
-            log.warn(e.getClass().getSimpleName());
-            sendForbiddenError(servletResponse, e);
+        } catch (InvalidJwtException e) {
+            log.warn(e.getMessage());
+            sendForbiddenError(servletResponse, e.getMessage());
         }
     }
 
-    private void authenticateByJwt(ServletRequest servletRequest) {
+    private void authenticateByJwt(ServletRequest servletRequest) throws InvalidJwtException {
         String jwt = getXAuthToken(servletRequest);
 
-        if (jwt != null && isValid(jwt)) {
+        if (jwt != null) {
             Authentication authentication = toAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -57,21 +56,15 @@ public class JwtSecurityFilter extends GenericFilterBean {
         return httpServletRequest.getHeader("X-AUTH-TOKEN");
     }
 
-    private boolean isValid(String jwtToken) {
-        Date now = new Date();
-        Date expiration = jwtParser.parseClaimsJws(jwtToken).getBody().getExpiration();
-        return now.before(expiration);
-    }
-
-    private Authentication toAuthentication(String token) {
-        String audience = jwtParser.parseClaimsJws(token).getBody().getAudience();
+    private Authentication toAuthentication(String token) throws InvalidJwtException {
+        String audience = jwtReader.getAudience(token);
         return new UsernamePasswordAuthenticationToken(audience, "", Collections.emptySet());
     }
 
-    private void sendForbiddenError(ServletResponse servletResponse, JwtException e) {
+    private void sendForbiddenError(ServletResponse servletResponse, String message) {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         httpServletResponse.setStatus(403);
-        printMessage(httpServletResponse, e.getClass().getSimpleName());
+        printMessage(httpServletResponse, message);
     }
 
     private void printMessage(HttpServletResponse httpServletResponse, String message) {

@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.api.MatchSupporter;
-import com.github.suloginscene.authserver.testing.api.RestDocsConfig;
+import com.github.suloginscene.authserver.testing.config.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;

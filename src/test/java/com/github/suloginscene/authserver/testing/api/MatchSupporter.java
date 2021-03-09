@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.testing.api;
 
-import io.jsonwebtoken.JwtParser;
+import com.github.suloginscene.authserver.jjwthelper.JwtReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.AssertionErrors;
@@ -11,13 +11,13 @@ import org.springframework.test.web.servlet.ResultMatcher;
 @RequiredArgsConstructor
 public class MatchSupporter {
 
-    private final JwtParser jwtParser;
+    private final JwtReader jwtReader;
 
 
     public ResultMatcher jwtAudienceIs(Long id) {
         return (result) -> {
             String encodedJwt = result.getResponse().getContentAsString();
-            String actualAudience = jwtParser.parseClaimsJws(encodedJwt).getBody().getAudience();
+            String actualAudience = jwtReader.getAudience(encodedJwt);
 
             AssertionErrors.assertEquals("Audience", id, Long.parseLong(actualAudience));
         };

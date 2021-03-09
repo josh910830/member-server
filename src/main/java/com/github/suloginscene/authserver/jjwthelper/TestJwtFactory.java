@@ -1,11 +1,8 @@
-package com.github.suloginscene.authserver.testing.api;
+package com.github.suloginscene.authserver.jjwthelper;
 
-import com.github.suloginscene.authserver.jwt.application.JwtFactory;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
@@ -13,19 +10,21 @@ import java.util.Date;
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 
 
-@Component
-@RequiredArgsConstructor
-public class JwtFactorySupporter {
+public class TestJwtFactory {
 
     private static final long MINUTE = 60 * 1000L;
     private static final long HOUR = 60 * MINUTE;
 
+    private final JwtBuilder jwtBuilder = Jwts.builder();
     private final JwtFactory jwtFactory;
-    private final JwtBuilder jwtBuilder;
 
 
-    public String create(Long userId) {
-        return jwtFactory.create(userId);
+    public TestJwtFactory(JwtFactory jwtFactory) {
+        this.jwtFactory = jwtFactory;
+    }
+
+    public String of(Long userId) {
+        return jwtFactory.of(userId);
     }
 
     public String expired(Long userId) {

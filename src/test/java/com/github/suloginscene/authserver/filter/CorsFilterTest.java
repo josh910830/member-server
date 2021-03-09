@@ -1,10 +1,10 @@
 package com.github.suloginscene.authserver.filter;
 
 import com.github.suloginscene.authserver.config.JwtProperties;
+import com.github.suloginscene.authserver.jjwthelper.JwtFactory;
 import com.github.suloginscene.authserver.member.api.MemberRestController;
 import com.github.suloginscene.authserver.member.api.SignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.api.JwtFactorySupporter;
 import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +36,7 @@ public class CorsFilterTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired JwtProperties jwtProperties;
-    @Autowired JwtFactorySupporter jwtFactorySupporter;
+    @Autowired JwtFactory jwtFactory;
     @Autowired RepositoryProxy repositoryProxy;
 
     String validOrigin;
@@ -106,7 +106,7 @@ public class CorsFilterTest {
     @DisplayName("GET 성공 - 200")
     void getMember_fromValidOrigin_returns200() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.create(member.getId());
+        String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).attachOrigin(validOrigin).build());
@@ -118,7 +118,7 @@ public class CorsFilterTest {
     @DisplayName("GET 실패 - 403")
     void getMember_fromInvalidOrigin_returns403() throws Exception {
         repositoryProxy.given(member);
-        String jwt = jwtFactorySupporter.create(member.getId());
+        String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).attachJwt(jwt).attachOrigin(invalidOrigin).build());
