@@ -1,7 +1,7 @@
 package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,7 @@ class MemberFindServiceTest {
 
     @Autowired MemberFindService memberFindService;
 
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     Member member;
 
@@ -35,14 +35,14 @@ class MemberFindServiceTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
     @Test
     @DisplayName("성공 - DTO 반환")
     void find_onSuccess_returnsDto() {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         MemberResponse memberResponse = memberFindService.findMember(member.getId());
 

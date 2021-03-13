@@ -3,7 +3,7 @@ package com.github.suloginscene.authserver.filter;
 import com.github.suloginscene.authserver.member.api.MemberRestController;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.config.TestJwtFactoryConfig;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import com.github.suloginscene.jjwthelper.TestJwtFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,7 @@ public class JwtSecurityFilterTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired TestJwtFactory testJwtFactory;
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     Member member;
 
@@ -45,14 +45,14 @@ public class JwtSecurityFilterTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
     @Test
     @DisplayName("정상 - 200")
     void getMember_onSuccess_returns200() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         String jwt = testJwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
@@ -64,7 +64,7 @@ public class JwtSecurityFilterTest {
     @Test
     @DisplayName("만료 - 403")
     void getMember_withExpiredJwt_returns403() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         String jwt = testJwtFactory.expired(member.getId());
 
         ResultActions when = mockMvc.perform(
@@ -77,7 +77,7 @@ public class JwtSecurityFilterTest {
     @Test
     @DisplayName("서명 - 403")
     void getMember_withInvalidSignature_returns403() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         String jwt = testJwtFactory.invalid(member.getId());
 
         ResultActions when = mockMvc.perform(
@@ -90,7 +90,7 @@ public class JwtSecurityFilterTest {
     @Test
     @DisplayName("형식 - 403")
     void getMember_withMalformedJwt_returns403() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         String jwt = testJwtFactory.malformed();
 
         ResultActions when = mockMvc.perform(

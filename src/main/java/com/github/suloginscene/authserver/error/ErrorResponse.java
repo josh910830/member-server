@@ -28,14 +28,14 @@ public class ErrorResponse {
         String className = e.getClass().getSimpleName();
         String message = e.getBindingResult()
                 .getFieldErrors().stream()
-                .map(ErrorResponse::getFormat)
+                .map(ErrorResponse::convertFieldErrorToString)
                 .collect(Collectors.joining(", "));
         return new ErrorResponse(className, message);
     }
 
-    private static String getFormat(FieldError r) {
+    private static String convertFieldErrorToString(FieldError error) {
         return String.format("'%s' is rejected for '%s'(%s)",
-                r.getRejectedValue(), r.getField(), r.getDefaultMessage());
+                error.getRejectedValue(), error.getField(), error.getDefaultMessage());
     }
 
 }

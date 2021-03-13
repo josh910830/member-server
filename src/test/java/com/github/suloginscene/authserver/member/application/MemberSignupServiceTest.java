@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ class MemberSignupServiceTest {
     @Autowired MemberSignupService memberSignupService;
     @MockBean PasswordEncoder passwordEncoder;
 
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     Email email;
     Password password;
@@ -41,7 +41,7 @@ class MemberSignupServiceTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
@@ -64,7 +64,7 @@ class MemberSignupServiceTest {
     @Test
     @DisplayName("이메일 중복 - 예외 발생")
     void signup_onDuplicate_throwsException() {
-        repositoryProxy.given(DefaultMembers.create());
+        repositoryFacade.given(DefaultMembers.create());
 
         Executable action = () -> memberSignupService.signup(email, password);
 

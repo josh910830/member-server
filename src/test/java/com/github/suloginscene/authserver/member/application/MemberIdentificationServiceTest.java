@@ -4,7 +4,7 @@ import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberPasswordNotMatchedException;
 import com.github.suloginscene.authserver.member.domain.Password;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class MemberIdentificationServiceTest {
 
     @Autowired MemberIdentificationService memberIdentificationService;
 
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     Member member;
     Email email;
@@ -41,14 +41,14 @@ class MemberIdentificationServiceTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
     @Test
     @DisplayName("정상 - 예외 미발생")
     void authenticate_onSuccess_returnsTrue() {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         Long id = memberIdentificationService.identify(email, password);
 
@@ -58,7 +58,7 @@ class MemberIdentificationServiceTest {
     @Test
     @DisplayName("존재하지 않는 사용자 - 예외 발생")
     void authenticate_withNonExistentEmail_throwsException() {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         Email nonExistent = new Email("non-existent@email.com");
         Executable action = () -> memberIdentificationService.identify(nonExistent, password);
@@ -69,7 +69,7 @@ class MemberIdentificationServiceTest {
     @Test
     @DisplayName("잘못된 비밀번호 - 예외 발생")
     void authenticate_withWrongPassword_throwsException() {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         Password wrong = new Password("wrongPassword");
         Executable action = () -> memberIdentificationService.identify(email, wrong);

@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.config.RestDocsConfig;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import com.github.suloginscene.jjwthelper.JwtFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ class MemberRestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired JwtFactory jwtFactory;
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     String email;
     String password;
@@ -50,7 +50,7 @@ class MemberRestControllerTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
@@ -109,7 +109,7 @@ class MemberRestControllerTest {
     @Test
     @DisplayName("POST 실패(이메일 중복) - 400")
     void signup_onDuplicate_returns400() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         SignupRequest request = new SignupRequest(email, password);
         ResultActions when = mockMvc.perform(
@@ -122,7 +122,7 @@ class MemberRestControllerTest {
     @Test
     @DisplayName("GET 성공 - 200")
     void getMember_onSuccess_returns200() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         String jwt = jwtFactory.of(member.getId());
 
         ResultActions when = mockMvc.perform(
@@ -136,7 +136,7 @@ class MemberRestControllerTest {
     @Test
     @DisplayName("GET 실패(권한) - 403")
     void getMember_withNotOwner_returns403() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
         Long audience = member.getId() + 1;
         String jwt = jwtFactory.of(audience);
 

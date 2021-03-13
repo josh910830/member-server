@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RepositoryProxy {
+public class RepositoryFacade {
 
     private static final String FORMAT = "======= %s =======\n";
 

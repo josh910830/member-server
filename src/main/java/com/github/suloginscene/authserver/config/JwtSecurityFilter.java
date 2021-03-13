@@ -45,7 +45,7 @@ public class JwtSecurityFilter extends GenericFilterBean {
     private void authenticateByJwt(ServletRequest servletRequest) throws InvalidJwtException {
         String jwt = getXAuthToken(servletRequest);
 
-        if (jwt != null) {
+        if (jwt != null && !jwt.isBlank()) {
             Authentication authentication = toAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

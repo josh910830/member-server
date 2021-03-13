@@ -2,7 +2,7 @@ package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.config.RestDocsConfig;
-import com.github.suloginscene.authserver.testing.db.RepositoryProxy;
+import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
 import com.github.suloginscene.jjwthelper.JwtReader;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ public class JwtRestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired JwtReader jwtReader;
-    @Autowired RepositoryProxy repositoryProxy;
+    @Autowired RepositoryFacade repositoryFacade;
 
     Member member;
     String email;
@@ -50,14 +50,14 @@ public class JwtRestControllerTest {
 
     @AfterEach
     void clear() {
-        repositoryProxy.clear();
+        repositoryFacade.clear();
     }
 
 
     @Test
     @DisplayName("정상 - aud 싣은 JWT 발급")
     void authServer_onSuccess_returnsAccessToken() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest(email, password);
         ResultActions when = mockMvc.perform(
@@ -72,7 +72,7 @@ public class JwtRestControllerTest {
     @Test
     @DisplayName("존재하지 않는 사용자 - 400")
     void authServer_withNonExistentUsername_returns400() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest("non-existent@email.com", password);
         ResultActions when = mockMvc.perform(
@@ -84,7 +84,7 @@ public class JwtRestControllerTest {
     @Test
     @DisplayName("잘못된 비밀번호 - 400")
     void authServer_withWrongPassword_returns400() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest(email, "wrongPassword");
         ResultActions when = mockMvc.perform(
@@ -96,7 +96,7 @@ public class JwtRestControllerTest {
     @Test
     @DisplayName("이메일 null - 400")
     void authServer_withNullEmail_returns400() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest(null, password);
         ResultActions when = mockMvc.perform(
@@ -108,7 +108,7 @@ public class JwtRestControllerTest {
     @Test
     @DisplayName("비밀번호 null - 400")
     void authServer_withNullPassword_returns400() throws Exception {
-        repositoryProxy.given(member);
+        repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest(email, null);
         ResultActions when = mockMvc.perform(
