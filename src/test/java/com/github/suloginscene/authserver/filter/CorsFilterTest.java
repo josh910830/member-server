@@ -104,7 +104,7 @@ public class CorsFilterTest {
     @DisplayName("GET 성공 - 200")
     void getMember_fromValidOrigin_returns200() throws Exception {
         repositoryFacade.given(member);
-        String jwt = jwtFactory.of(member.getId());
+        String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).jwt(jwt).origin(validOrigin).build());
@@ -116,7 +116,7 @@ public class CorsFilterTest {
     @DisplayName("GET 실패 - 403")
     void getMember_fromInvalidOrigin_returns403() throws Exception {
         repositoryFacade.given(member);
-        String jwt = jwtFactory.of(member.getId());
+        String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).jwt(jwt).origin(invalidOrigin).build());

@@ -53,7 +53,7 @@ public class JwtSecurityFilterTest {
     @DisplayName("정상 - 200")
     void getMember_onSuccess_returns200() throws Exception {
         repositoryFacade.given(member);
-        String jwt = testJwtFactory.of(member.getId());
+        String jwt = testJwtFactory.valid(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).jwt(jwt).build());

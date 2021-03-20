@@ -123,7 +123,7 @@ class MemberRestControllerTest {
     @DisplayName("GET 성공 - 200")
     void getMember_onSuccess_returns200() throws Exception {
         repositoryFacade.given(member);
-        String jwt = jwtFactory.of(member.getId());
+        String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).jwt(jwt).build());
@@ -138,7 +138,7 @@ class MemberRestControllerTest {
     void getMember_withNotOwner_returns403() throws Exception {
         repositoryFacade.given(member);
         Long audience = member.getId() + 1;
-        String jwt = jwtFactory.of(audience);
+        String jwt = jwtFactory.create(audience);
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + member.getId()).jwt(jwt).build());
@@ -150,7 +150,7 @@ class MemberRestControllerTest {
     @DisplayName("GET 실패(리소스 없음) - 404")
     void getMember_onNonExistent_returns404() throws Exception {
         Long nonExistentId = Long.MAX_VALUE;
-        String jwt = jwtFactory.of(nonExistentId);
+        String jwt = jwtFactory.create(nonExistentId);
 
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/" + nonExistentId).jwt(jwt).build());

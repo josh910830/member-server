@@ -29,7 +29,7 @@ public class JwtRestController {
         Password password = new Password(request.getPassword());
 
         Long id = memberIdentificationService.identify(email, password);
-        String jwt = jwtFactory.of(id);
+        String jwt = jwtFactory.create(id);
 
         return ResponseEntity.ok().body(jwt);
     }
