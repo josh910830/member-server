@@ -5,11 +5,10 @@ import com.github.suloginscene.authserver.member.application.MemberResponse;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
+import com.github.suloginscene.jwtconfig.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,20 +41,11 @@ public class MemberRestController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<MemberResponse> getMember(@PathVariable Long id, @AuthenticationPrincipal String username) {
-        checkOwner(username, id);
-
-        MemberResponse memberResponse = memberFindService.findMember(id);
+    @GetMapping
+    ResponseEntity<MemberResponse> myInfo(@Authenticated Long memberId) {
+        MemberResponse memberResponse = memberFindService.findMember(memberId);
 
         return ResponseEntity.ok().body(memberResponse);
-    }
-
-    private void checkOwner(String username, Long memberId) {
-        Long audience = Long.parseLong(username);
-        if (!audience.equals(memberId)) {
-            throw new ResourceAccessDeniedException(username, "member", memberId);
-        }
     }
 
 }

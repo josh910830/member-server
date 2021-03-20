@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.suloginscene</groupId>
-            <artifactId>jjwt-helper</artifactId>
+            <artifactId>jwt-config</artifactId>
             <version>0.0.1</version>
         </dependency>
 

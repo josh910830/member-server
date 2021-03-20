@@ -1,6 +1,5 @@
 package com.github.suloginscene.authserver.filter;
 
-import com.github.suloginscene.authserver.config.JwtProperties;
 import com.github.suloginscene.authserver.member.api.MemberRestController;
 import com.github.suloginscene.authserver.member.api.SignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,9 +37,11 @@ public class CorsFilterTest {
     static final String URL = linkTo(MemberRestController.class).toString();
 
     @Autowired MockMvc mockMvc;
-    @Autowired JwtProperties jwtProperties;
     @Autowired JwtFactory jwtFactory;
     @Autowired RepositoryFacade repositoryFacade;
+
+    @Value("${jwt.urls}")
+    String urls;
 
     String validOrigin;
     String invalidOrigin;
@@ -50,7 +52,7 @@ public class CorsFilterTest {
 
     @BeforeEach
     void setup() {
-        validOrigin = jwtProperties.getUrls().split(",")[0];
+        validOrigin = urls.split(",")[0];
         invalidOrigin = "http://invalid.com";
 
         signupRequest = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
@@ -102,24 +104,24 @@ public class CorsFilterTest {
 
     @Test
     @DisplayName("GET 성공 - 200")
-    void getMember_fromValidOrigin_returns200() throws Exception {
+    void myInfo_fromValidOrigin_returns200() throws Exception {
         repositoryFacade.given(member);
         String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).jwt(jwt).origin(validOrigin).build());
+                ofGet(URL).jwt(jwt).origin(validOrigin).build());
 
         when.andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("GET 실패 - 403")
-    void getMember_fromInvalidOrigin_returns403() throws Exception {
+    void myInfo_fromInvalidOrigin_returns403() throws Exception {
         repositoryFacade.given(member);
         String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/" + member.getId()).jwt(jwt).origin(invalidOrigin).build());
+                ofGet(URL).jwt(jwt).origin(invalidOrigin).build());
 
         when.andExpect(status().isForbidden());
     }

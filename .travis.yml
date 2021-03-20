@@ -13,6 +13,9 @@ before_install:
   - git clone https://github.com/suloginscene/jjwt-helper.git ../jjwt-helper
   - cd ../jjwt-helper
   - mvn install
+  - git clone https://github.com/suloginscene/jwt-config.git ../jwt-config
+  - cd ../jwt-config
+  - mvn install
   - cd ../auth-server
 
 notifications:
