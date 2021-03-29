@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.jwt.api;
+package com.github.suloginscene.authserver.jwt.api.request;
 
 import lombok.Data;
 

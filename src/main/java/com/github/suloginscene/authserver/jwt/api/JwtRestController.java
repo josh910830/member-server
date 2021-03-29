@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.jwt.api;
 
+import com.github.suloginscene.authserver.jwt.api.request.JwtRequest;
 import com.github.suloginscene.authserver.member.application.MemberIdentificationService;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;

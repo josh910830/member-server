@@ -1,14 +1,10 @@
 package com.github.suloginscene.authserver.filter;
 
-import com.github.suloginscene.jwt.JwtFactory;
+import com.github.suloginscene.authserver.testing.base.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.github.suloginscene.test.RequestBuilder.ofGet;
@@ -18,14 +14,8 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@SpringBootTest
-@AutoConfigureMockMvc
 @DisplayName("CORS 필터")
-public class CorsFilterTest {
-
-    @Autowired MockMvc mockMvc;
-    @Autowired JwtFactory jwtFactory;
-    String jwt;
+public class CorsFilterTest extends ControllerTest {
 
     static final String URL = "/";
 
@@ -35,11 +25,8 @@ public class CorsFilterTest {
     String validOrigin;
     String invalidOrigin;
 
-
     @BeforeEach
     void setup() {
-        jwt = jwtFactory.create(1L);
-
         validOrigin = urls.split(",")[0];
         invalidOrigin = "http://invalid.com";
     }

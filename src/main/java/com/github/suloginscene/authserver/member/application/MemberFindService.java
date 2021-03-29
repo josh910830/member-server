@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.application;
 
+import com.github.suloginscene.authserver.member.application.data.MemberData;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,9 @@ public class MemberFindService {
     private final MemberRepository memberRepository;
 
 
-    public MemberResponse findMember(Long id) {
+    public MemberData findMember(Long id) {
         Member member = memberRepository.findById(id);
-        return new MemberResponse(member);
+        return new MemberData(member);
     }
 
 }

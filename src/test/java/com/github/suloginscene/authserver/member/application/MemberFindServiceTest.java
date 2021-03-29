@@ -1,57 +1,41 @@
 package com.github.suloginscene.authserver.member.application;
 
+import com.github.suloginscene.authserver.member.application.data.MemberData;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
-import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.authserver.testing.base.IntegrationTest;
+import com.github.suloginscene.authserver.testing.data.TestingMembers;
 import com.github.suloginscene.exception.NotFoundException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@SpringBootTest
 @DisplayName("회원 찾기 서비스")
-class MemberFindServiceTest {
+class MemberFindServiceTest extends IntegrationTest {
 
     @Autowired MemberFindService memberFindService;
-
-    @Autowired RepositoryFacade repositoryFacade;
-
-    Member member;
-
-
-    @BeforeEach
-    void setup() {
-        member = DefaultMembers.create();
-    }
-
-    @AfterEach
-    void clear() {
-        repositoryFacade.clear();
-    }
 
 
     @Test
     @DisplayName("성공 - DTO 반환")
     void find_onSuccess_returnsDto() {
-        repositoryFacade.given(member);
+        Member member = TestingMembers.create();
+        given(member);
 
-        MemberResponse memberResponse = memberFindService.findMember(member.getId());
+        Long id = member.getId();
+        MemberData memberData = memberFindService.findMember(id);
 
-        assertThat(memberResponse).hasNoNullFieldsOrProperties();
+        assertThat(memberData).hasNoNullFieldsOrProperties();
     }
 
     @Test
     @DisplayName("리소스 없음 - 예외 발생")
     void find_onNonExistent_throwsException() {
-        Long nonExistentId = 1L;
+        Long nonExistentId = Long.MAX_VALUE;
         Executable action = () -> memberFindService.findMember(nonExistentId);
 
         assertThrows(NotFoundException.class, action);

@@ -1,55 +1,35 @@
 package com.github.suloginscene.authserver.member.application;
 
-import com.github.suloginscene.authserver.member.domain.Email;
-import com.github.suloginscene.authserver.member.domain.Password;
-import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
-import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.testing.base.IntegrationTest;
+import com.github.suloginscene.authserver.testing.data.TestingMembers;
 import com.github.suloginscene.exception.RequestException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.github.suloginscene.authserver.testing.data.TestingMembers.EMAIL;
+import static com.github.suloginscene.authserver.testing.data.TestingMembers.RAW_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 
 
-@SpringBootTest
 @DisplayName("회원 가입 서비스")
-class MemberSignupServiceTest {
+class MemberSignupServiceTest extends IntegrationTest {
 
     @Autowired MemberSignupService memberSignupService;
     @MockBean PasswordEncoder passwordEncoder;
-
-    @Autowired RepositoryFacade repositoryFacade;
-
-    Email email;
-    Password password;
-
-
-    @BeforeEach
-    void setup() {
-        email = DefaultMembers.EMAIL;
-        password = DefaultMembers.RAW_PASSWORD;
-    }
-
-    @AfterEach
-    void clear() {
-        repositoryFacade.clear();
-    }
 
 
     @Test
     @DisplayName("정상 - Id 반환")
     void signup_onSuccess_returnsId() {
-        Long id = memberSignupService.signup(email, password);
+        Long id = memberSignupService.signup(EMAIL, RAW_PASSWORD);
 
         assertThat(id).isNotNull();
     }
@@ -57,7 +37,7 @@ class MemberSignupServiceTest {
     @Test
     @DisplayName("정상 - 패스워드 인코딩")
     void signup_onSuccess_encodePassword() {
-        memberSignupService.signup(email, password);
+        memberSignupService.signup(EMAIL, RAW_PASSWORD);
 
         then(passwordEncoder).should().encode(anyString());
     }
@@ -65,9 +45,10 @@ class MemberSignupServiceTest {
     @Test
     @DisplayName("이메일 중복 - 예외 발생")
     void signup_onDuplicate_throwsException() {
-        repositoryFacade.given(DefaultMembers.create());
+        Member member = TestingMembers.create();
+        given(member);
 
-        Executable action = () -> memberSignupService.signup(email, password);
+        Executable action = () -> memberSignupService.signup(EMAIL, RAW_PASSWORD);
 
         assertThrows(RequestException.class, action);
     }

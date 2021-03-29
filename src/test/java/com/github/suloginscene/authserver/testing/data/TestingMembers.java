@@ -1,4 +1,4 @@
-package com.github.suloginscene.authserver.testing.fixture;
+package com.github.suloginscene.authserver.testing.data;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 
 @NoArgsConstructor(access = PRIVATE)
-public class DefaultMembers {
+public class TestingMembers {
 
     public static final String EMAIL_VALUE = "test@email.com";
     public static final Email EMAIL = new Email(EMAIL_VALUE);

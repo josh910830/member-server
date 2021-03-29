@@ -1,16 +1,16 @@
-package com.github.suloginscene.authserver.member.application;
+package com.github.suloginscene.authserver.member.application.data;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import lombok.Data;
 
 
 @Data
-public class MemberResponse {
+public class MemberData {
 
     private final String email;
 
 
-    public MemberResponse(Member member) {
+    public MemberData(Member member) {
         email = member.getEmail().get();
     }
 

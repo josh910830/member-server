@@ -1,8 +1,9 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.member.api.request.SignupRequest;
 import com.github.suloginscene.authserver.member.application.MemberFindService;
-import com.github.suloginscene.authserver.member.application.MemberResponse;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
+import com.github.suloginscene.authserver.member.application.data.MemberData;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.security.Authenticated;
@@ -33,7 +34,7 @@ public class MemberRestController {
     ResponseEntity<Void> signup(@RequestBody @Valid SignupRequest request) {
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
-        // TODO confirm password
+        // TODO confirm password in fe
 
         Long id = memberSignupService.signup(email, password);
 
@@ -42,10 +43,10 @@ public class MemberRestController {
     }
 
     @GetMapping
-    ResponseEntity<MemberResponse> myInfo(@Authenticated Long memberId) {
-        MemberResponse memberResponse = memberFindService.findMember(memberId);
+    ResponseEntity<MemberData> myInfo(@Authenticated Long memberId) {
+        MemberData memberData = memberFindService.findMember(memberId);
 
-        return ResponseEntity.ok().body(memberResponse);
+        return ResponseEntity.ok().body(memberData);
     }
 
 }
