@@ -4,6 +4,7 @@ import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.exception.RequestException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,7 +69,7 @@ class MemberSignupServiceTest {
 
         Executable action = () -> memberSignupService.signup(email, password);
 
-        assertThrows(DuplicateEmailException.class, action);
+        assertThrows(RequestException.class, action);
     }
 
 }

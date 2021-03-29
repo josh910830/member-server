@@ -5,7 +5,7 @@ import com.github.suloginscene.authserver.member.application.MemberResponse;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
-import com.github.suloginscene.jwtconfig.Authenticated;
+import com.github.suloginscene.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

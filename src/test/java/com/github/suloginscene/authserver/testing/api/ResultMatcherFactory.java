@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.testing.api;
 
-import com.github.suloginscene.jjwthelper.JwtReader;
+import com.github.suloginscene.jwt.JwtReader;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.ResultMatcher;
 

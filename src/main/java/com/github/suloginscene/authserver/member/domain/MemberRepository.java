@@ -1,14 +1,41 @@
 package com.github.suloginscene.authserver.member.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.github.suloginscene.exception.NotFoundException;
+import com.github.suloginscene.profile.ProfileChecker;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class MemberRepository {
+
+    private final MemberJpaRepository memberJpaRepository;
+    private final ProfileChecker profileChecker;
 
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+    public Member findById(Long id) {
+        return memberJpaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Member.class, id));
+    }
 
-    boolean existsByEmail(Email email);
+    public Member findByEmail(Email email) {
+        return memberJpaRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(Member.class, email));
+    }
 
-    Optional<Member> findByEmail(Email email);
+    public Long save(Member member) {
+        Member saved = memberJpaRepository.save(member);
+        return saved.getId();
+    }
+
+    public boolean existsByEmail(Email email) {
+        return memberJpaRepository.existsByEmail(email);
+    }
+
+    public void deleteAll() {
+        profileChecker.checkTest();
+        memberJpaRepository.deleteAll();
+    }
 
 }

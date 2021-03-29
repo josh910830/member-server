@@ -16,7 +16,7 @@ public class MemberFindService {
 
 
     public MemberResponse findMember(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow();
+        Member member = memberRepository.findById(id);
         return new MemberResponse(member);
     }
 

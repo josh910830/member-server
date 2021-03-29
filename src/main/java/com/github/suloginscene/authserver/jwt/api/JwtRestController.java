@@ -3,7 +3,7 @@ package com.github.suloginscene.authserver.jwt.api;
 import com.github.suloginscene.authserver.member.application.MemberIdentificationService;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Password;
-import com.github.suloginscene.jjwthelper.JwtFactory;
+import com.github.suloginscene.jwt.JwtFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

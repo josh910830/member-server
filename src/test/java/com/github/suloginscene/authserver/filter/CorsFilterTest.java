@@ -1,12 +1,6 @@
 package com.github.suloginscene.authserver.filter;
 
-import com.github.suloginscene.authserver.member.api.MemberRestController;
-import com.github.suloginscene.authserver.member.api.SignupRequest;
-import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
-import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import com.github.suloginscene.jjwthelper.JwtFactory;
-import org.junit.jupiter.api.AfterEach;
+import com.github.suloginscene.jwt.JwtFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,14 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofGet;
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPreflight;
-import static com.github.suloginscene.authserver.testing.fixture.DefaultMembers.EMAIL_VALUE;
-import static com.github.suloginscene.authserver.testing.fixture.DefaultMembers.RAW_PASSWORD_VALUE;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static com.github.suloginscene.test.RequestBuilder.ofGet;
+import static com.github.suloginscene.test.RequestBuilder.ofPost;
+import static com.github.suloginscene.test.RequestBuilder.ofPreflight;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,11 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("CORS 필터")
 public class CorsFilterTest {
 
-    static final String URL = linkTo(MemberRestController.class).toString();
-
     @Autowired MockMvc mockMvc;
     @Autowired JwtFactory jwtFactory;
-    @Autowired RepositoryFacade repositoryFacade;
+    String jwt;
+
+    static final String URL = "/";
 
     @Value("${jwt.urls}")
     String urls;
@@ -46,80 +35,84 @@ public class CorsFilterTest {
     String validOrigin;
     String invalidOrigin;
 
-    SignupRequest signupRequest;
-    Member member;
-
 
     @BeforeEach
     void setup() {
+        jwt = jwtFactory.create(1L);
+
         validOrigin = urls.split(",")[0];
         invalidOrigin = "http://invalid.com";
-
-        signupRequest = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
-        member = DefaultMembers.create();
-    }
-
-    @AfterEach
-    void clear() {
-        repositoryFacade.clear();
     }
 
 
     @Test
-    @DisplayName("OPTIONS 성공 - 200")
+    @DisplayName("OPTIONS 허용 - 200")
     void options_fromValidOrigin_returns200() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofPreflight(URL, validOrigin, POST, CONTENT_TYPE, ACCEPT).build());
+                ofPreflight(URL, validOrigin, POST).build());
 
         when.andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("OPTIONS 실패 - 403")
+    @DisplayName("OPTIONS 비허용 - 403")
     void options_fromInvalidOrigin_returns403() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofPreflight(URL, invalidOrigin, POST, CONTENT_TYPE, ACCEPT).build());
+                ofPreflight(URL, invalidOrigin, POST).build());
 
         when.andExpect(status().isForbidden());
     }
 
 
     @Test
-    @DisplayName("POST 성공 - 201")
-    void signup_fromValidOrigin_returns201() throws Exception {
+    @DisplayName("POST 동일출처 - 404")
+    void post_withoutOrigin_returns404() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofPost(URL).json(signupRequest).origin(validOrigin).build());
+                ofPost(URL).jwt(jwt).build());
 
-        when.andExpect(status().isCreated());
+        when.andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("POST 실패 - 403")
-    void signup_fromInvalidOrigin_returns403() throws Exception {
+    @DisplayName("POST 허용 - 404")
+    void post_fromValidOrigin_returns404() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofPost(URL).json(signupRequest).origin(invalidOrigin).build());
+                ofPost(URL).jwt(jwt).origin(validOrigin).build());
+
+        when.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("POST 비허용 - 403")
+    void post_fromInvalidOrigin_returns403() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofPost(URL).jwt(jwt).origin(invalidOrigin).build());
 
         when.andExpect(status().isForbidden());
     }
 
-    @Test
-    @DisplayName("GET 성공 - 200")
-    void myInfo_fromValidOrigin_returns200() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = jwtFactory.create(member.getId());
 
+    @Test
+    @DisplayName("GET 동일출처 - 404")
+    void get_withoutOrigin_returns404() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofGet(URL).jwt(jwt).build());
+
+        when.andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET 허용 - 404")
+    void get_fromValidOrigin_returns404() throws Exception {
         ResultActions when = mockMvc.perform(
                 ofGet(URL).jwt(jwt).origin(validOrigin).build());
 
-        when.andExpect(status().isOk());
+        when.andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("GET 실패 - 403")
-    void myInfo_fromInvalidOrigin_returns403() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = jwtFactory.create(member.getId());
-
+    @DisplayName("GET 비허용 - 403")
+    void get_fromInvalidOrigin_returns403() throws Exception {
         ResultActions when = mockMvc.perform(
                 ofGet(URL).jwt(jwt).origin(invalidOrigin).build());
 

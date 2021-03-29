@@ -4,6 +4,7 @@ import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import com.github.suloginscene.authserver.member.domain.Password;
+import com.github.suloginscene.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,12 @@ public class MemberSignupService {
         password = password.encoded(passwordEncoder);
 
         Member created = new Member(email, password);
-        Member saved = memberRepository.save(created);
-
-        return saved.getId();
+        return memberRepository.save(created);
     }
 
     private void checkDuplicated(Email email) {
         if (memberRepository.existsByEmail(email)) {
-            throw new DuplicateEmailException(email);
+            throw new RequestException(email + " is already exists");
         }
     }
 

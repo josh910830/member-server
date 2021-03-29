@@ -2,10 +2,11 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.member.domain.MemberPasswordNotMatchedException;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
+import com.github.suloginscene.exception.NotFoundException;
+import com.github.suloginscene.exception.RequestException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,7 +63,7 @@ class MemberIdentificationServiceTest {
         Email nonExistent = new Email("non-existent@email.com");
         Executable action = () -> memberIdentificationService.identify(nonExistent, password);
 
-        assertThrows(UsernameNotFoundException.class, action);
+        assertThrows(NotFoundException.class, action);
     }
 
     @Test
@@ -74,7 +74,7 @@ class MemberIdentificationServiceTest {
         Password wrong = new Password("wrongPassword");
         Executable action = () -> memberIdentificationService.identify(email, wrong);
 
-        assertThrows(MemberPasswordNotMatchedException.class, action);
+        assertThrows(RequestException.class, action);
     }
 
 }

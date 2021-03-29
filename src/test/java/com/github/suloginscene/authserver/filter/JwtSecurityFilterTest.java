@@ -1,11 +1,6 @@
 package com.github.suloginscene.authserver.filter;
 
-import com.github.suloginscene.authserver.member.api.MemberRestController;
-import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
-import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import com.github.suloginscene.jjwthelper.TestJwtFactory;
-import org.junit.jupiter.api.AfterEach;
+import com.github.suloginscene.test.TestJwtFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,86 +10,84 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofGet;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static com.github.suloginscene.test.RequestBuilder.ofGet;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+@DisplayName("JWT 필터")
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("JWT 필터")
 public class JwtSecurityFilterTest {
 
-    static final String URL = linkTo(MemberRestController.class).toString();
+    static final String URL = "/";
 
     @Autowired MockMvc mockMvc;
     @Autowired TestJwtFactory testJwtFactory;
-    @Autowired RepositoryFacade repositoryFacade;
 
-    Member member;
-
+    Long id;
 
     @BeforeEach
     void setup() {
-        member = DefaultMembers.create();
-    }
-
-    @AfterEach
-    void clear() {
-        repositoryFacade.clear();
+        id = 1L;
     }
 
 
     @Test
-    @DisplayName("정상 - 200")
-    void myInfo_onSuccess_returns200() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = testJwtFactory.valid(member.getId());
+    @DisplayName("정상 - 404")
+    void jwtFilter_withValidJwt_returns404() throws Exception {
+        String validJwt = testJwtFactory.valid(id);
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofGet(URL).jwt(validJwt).build());
 
-        when.andExpect(status().isOk());
+        when.andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("만료 - 403")
-    void myInfo_withExpiredJwt_returns403() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = testJwtFactory.expired(member.getId());
+    @DisplayName("만료 - 401")
+    void jwtFilter_withExpiredJwt_returns401() throws Exception {
+        String expiredJwt = testJwtFactory.expired(id);
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofGet(URL).jwt(expiredJwt).build());
 
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string("ExpiredJwtException"));
+        when.andExpect(status().isUnauthorized())
+                .andExpect(content().string("Expired Jwt"));
     }
 
     @Test
-    @DisplayName("서명 - 403")
-    void myInfo_withInvalidSignature_returns403() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = testJwtFactory.invalid(member.getId());
+    @DisplayName("서명 - 401")
+    void jwtFilter_withInvalidSignature_returns401() throws Exception {
+        String invalidJwt = testJwtFactory.invalid(id);
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofGet(URL).jwt(invalidJwt).build());
 
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string("SignatureException"));
+        when.andExpect(status().isUnauthorized())
+                .andExpect(content().string("Invalid Signature"));
     }
 
     @Test
-    @DisplayName("형식 - 403")
-    void myInfo_withMalformedJwt_returns403() throws Exception {
-        repositoryFacade.given(member);
-        String jwt = testJwtFactory.malformed();
+    @DisplayName("형식 - 401")
+    void jwtFilter_withMalformedJwt_returns401() throws Exception {
+        String malformed = testJwtFactory.malformed();
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofGet(URL).jwt(malformed).build());
 
-        when.andExpect(status().isForbidden())
-                .andExpect(content().string("MalformedJwtException"));
+        when.andExpect(status().isUnauthorized())
+                .andExpect(content().string("Malformed Jwt"));
+    }
+
+    @Test
+    @DisplayName("없음 - 401")
+    void jwtFilter_withoutJwt_returns401() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofGet(URL).build());
+
+        when.andExpect(status().isUnauthorized())
+                .andExpect(content().string("Jwt Not Exists"));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.domain;
 
+import com.github.suloginscene.exception.RequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,7 @@ public class Member {
     public void checkPassword(Password rawPassword, PasswordEncoder passwordEncoder) {
         boolean matches = password.matches(rawPassword, passwordEncoder);
         if (!matches) {
-            throw new MemberPasswordNotMatchedException(email);
+            throw new RequestException("password not matched for " + email);
         }
     }
 

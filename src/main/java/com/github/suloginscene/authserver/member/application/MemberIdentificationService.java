@@ -5,7 +5,6 @@ import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import com.github.suloginscene.authserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +27,7 @@ public class MemberIdentificationService {
     }
 
     private Member findMember(Email email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email.get()));
+        return memberRepository.findByEmail(email);
     }
 
 }

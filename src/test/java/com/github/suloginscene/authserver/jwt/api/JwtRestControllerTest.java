@@ -1,10 +1,10 @@
 package com.github.suloginscene.authserver.jwt.api;
 
 import com.github.suloginscene.authserver.member.domain.Member;
-import com.github.suloginscene.authserver.testing.config.RestDocsConfig;
 import com.github.suloginscene.authserver.testing.db.RepositoryFacade;
 import com.github.suloginscene.authserver.testing.fixture.DefaultMembers;
-import com.github.suloginscene.jjwthelper.JwtReader;
+import com.github.suloginscene.jwt.JwtReader;
+import com.github.suloginscene.test.RestDocsConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.github.suloginscene.authserver.testing.api.RequestBuilder.ofPost;
 import static com.github.suloginscene.authserver.testing.api.ResultMatcherFactory.jwtAudienceIs;
+import static com.github.suloginscene.test.RequestBuilder.ofPost;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,15 +70,15 @@ public class JwtRestControllerTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 사용자 - 400")
-    void authServer_withNonExistentUsername_returns400() throws Exception {
+    @DisplayName("존재하지 않는 사용자 - 404")
+    void authServer_withNonExistentUsername_returns404() throws Exception {
         repositoryFacade.given(member);
 
         JwtRequest request = new JwtRequest("non-existent@email.com", password);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
-        when.andExpect(status().isBadRequest());
+        when.andExpect(status().isNotFound());
     }
 
     @Test
