@@ -38,7 +38,7 @@ class MemberSignupServiceTest extends IntegrationTest {
 
     @Test
     @DisplayName("가입신청 - 인코딩/임시저장/메일")
-    void signup_onSuccess_encodesSavesMails() {
+    void signup_onSuccess_encodesSavesSends() {
         memberSignupService.signup(EMAIL, RAW_PASSWORD);
 
         then(passwordEncoder).should().encode(anyString());

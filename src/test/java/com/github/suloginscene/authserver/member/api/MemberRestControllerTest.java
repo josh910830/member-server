@@ -138,6 +138,31 @@ class MemberRestControllerTest extends ControllerTest {
 
 
     @Test
+    @DisplayName("임시 비밀번호 발급 - 200")
+    void issuePassword_onSuccess_returns200() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        String queryString = "email=" + member.getEmail().get();
+        ResultActions when = mockMvc.perform(
+                ofGet(URL + "/issue-password?" + queryString).build());
+
+        ResultActions then = when.andExpect(status().isOk());
+
+        then.andDo(document("issue-member-password"));
+    }
+
+    @Test
+    @DisplayName("임시 비밀번호 발급(쿼리스트링 없음) - 400")
+    void issuePassword_withNoQueryString_returns400() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofGet(URL + "/issue-password").build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     @DisplayName("비밀번호 변경 성공 - 204")
     void changePassword_onSuccess_returns204() throws Exception {
         Member member = TestingMembers.create();

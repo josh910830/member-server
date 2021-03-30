@@ -61,6 +61,15 @@ public class MemberRestController {
         return ResponseEntity.ok().body(memberData);
     }
 
+    @GetMapping("/issue-password")
+    ResponseEntity<Void> issuePassword(@RequestParam String email) {
+        Email target = new Email(email);
+
+        memberConfiguringService.issuePassword(target);
+
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping
     ResponseEntity<Void> changePassword(@RequestBody @Valid MemberPasswordChangeRequest request,
                                         @Authenticated Long memberId) {

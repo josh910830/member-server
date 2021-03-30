@@ -15,7 +15,7 @@
 === HTTP 동사
 
 |===
-| `GET` | 조회 또는 링크 인증
+| `GET` | 조회, 링크 인증, 임시 비밀번호 발급
 | `POST` | 생성 또는 JWT 발급
 | `PUT` | 수정
 | `DELETE` | 삭제
@@ -81,7 +81,6 @@ JWT 발급 +
 회원 탈퇴
 |===
 
-// TODO send tempPassword
 // TODO index
 [[representation]]
 == 표현
@@ -113,6 +112,11 @@ operation::verify-member[snippets='http-request,http-response']
 ==== 회원 조회 (내 정보)
 
 operation::get-member[snippets='http-request,http-response']
+
+[[representation-member-issue-password]]
+==== 임시 비밀번호 발급
+
+operation::issue-member-password[snippets='http-request,http-response']
 
 [[representation-member-put-password]]
 ==== 비밀번호 변경
