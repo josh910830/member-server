@@ -35,8 +35,8 @@ public class Member {
 
 
     public void checkPassword(Password rawPassword, PasswordEncoder passwordEncoder) {
-        boolean matches = password.matches(rawPassword, passwordEncoder);
-        if (!matches) {
+        boolean matched = password.matches(rawPassword, passwordEncoder);
+        if (!matched) {
             throw new RequestException("password not matched for " + this);
         }
     }

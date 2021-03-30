@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.testing.base;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
+import com.github.suloginscene.authserver.member.domain.temp.TempMember;
 import com.github.suloginscene.authserver.member.domain.temp.TempMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -19,11 +20,20 @@ public abstract class IntegrationTest {
 
     protected void given(Member... members) {
         logAround("given", () -> {
-            for (Member account : members) {
-                memberRepository.save(account);
+            for (Member member : members) {
+                memberRepository.save(member);
             }
         });
     }
+
+    protected void given(TempMember... tempMembers) {
+        logAround("given", () -> {
+            for (TempMember tempMember : tempMembers) {
+                tempMemberRepository.save(tempMember);
+            }
+        });
+    }
+
 
     protected Member sync(Member member) {
         ThreadLocal<Member> temp = new ThreadLocal<>();
@@ -33,6 +43,7 @@ public abstract class IntegrationTest {
         });
         return temp.get();
     }
+
 
     @AfterEach
     final void clearAllRepositories() {

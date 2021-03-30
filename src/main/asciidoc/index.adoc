@@ -81,7 +81,6 @@ JWT 발급 +
 회원 탈퇴
 |===
 
-// TODO get verificationLink
 // TODO send tempPassword
 // TODO index
 [[representation]]
@@ -105,6 +104,11 @@ JWT 발급 +
 
 operation::post-member[snippets='http-request,http-response']
 
+[[representation-member-verify]]
+==== 메일 인증
+
+operation::verify-member[snippets='http-request,http-response']
+
 [[representation-member-get]]
 ==== 회원 조회 (내 정보)
 
@@ -119,3 +123,11 @@ operation::put-member-password[snippets='http-request,http-response']
 ==== 회원 탈퇴
 
 operation::delete-member[snippets='http-request,http-response']
+
+[[representation-jwt]]
+=== JWT
+
+[[representation-jwt-issue]]
+==== JWT 발급
+
+operation::issue-jwt[snippets='http-request,http-response']

@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.config.AppProperties;
 import com.github.suloginscene.authserver.member.domain.Email;
+import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import com.github.suloginscene.authserver.member.domain.Password;
 import com.github.suloginscene.authserver.member.domain.temp.TempMember;
@@ -62,6 +63,17 @@ public class MemberSignupService {
         String content = "회원가입 인증 링크: " + link;
 
         return new MailMessage(recipient, title, content);
+    }
+
+
+    public void verify(Long id, String token) {
+        TempMember tempMember = tempMemberRepository.findById(id);
+        tempMember.checkVerificationToken(token);
+
+        Member member = tempMember.toMember();
+        memberRepository.save(member);
+
+        tempMemberRepository.delete(tempMember);
     }
 
 }

@@ -54,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .mvcMatchers(POST, "/api/members").permitAll()
+                .mvcMatchers(GET, "/api/members/verify").permitAll()
                 .mvcMatchers(POST, "/jwt").permitAll()
                 .anyRequest().hasAuthority(MEMBER);
 

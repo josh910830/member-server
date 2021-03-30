@@ -3,6 +3,7 @@ package com.github.suloginscene.authserver.member.api;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.member.domain.temp.TempMember;
 import com.github.suloginscene.authserver.testing.base.ControllerTest;
 import com.github.suloginscene.authserver.testing.data.TestingMembers;
 import org.junit.jupiter.api.DisplayName;
@@ -87,6 +88,33 @@ class MemberRestControllerTest extends ControllerTest {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @DisplayName("인증 - 200")
+    void verify_onSuccess_returns200() throws Exception {
+        TempMember tempMember = TestingMembers.temp();
+        given(tempMember);
+
+        Long id = tempMember.getId();
+        String token = tempMember.getVerificationToken();
+        String queryString = "id=" + id + "&token=" + token;
+        ResultActions when = mockMvc.perform(
+                ofGet(URL + "/verify?" + queryString).build());
+
+        ResultActions then = when.andExpect(status().isOk());
+
+        then.andDo(document("verify-member"));
+    }
+
+    @Test
+    @DisplayName("인증(쿼리스트링 없음) - 400")
+    void verify_withNoQueryString_returns400() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofGet(URL + "/verify").build());
 
         when.andExpect(status().isBadRequest());
     }

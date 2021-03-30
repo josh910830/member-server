@@ -1,9 +1,12 @@
 package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.member.domain.MemberRepository;
+import com.github.suloginscene.authserver.member.domain.temp.TempMember;
 import com.github.suloginscene.authserver.member.domain.temp.TempMemberRepository;
 import com.github.suloginscene.authserver.testing.base.IntegrationTest;
 import com.github.suloginscene.authserver.testing.data.TestingMembers;
+import com.github.suloginscene.exception.NotFoundException;
 import com.github.suloginscene.exception.RequestException;
 import com.github.suloginscene.mail.Mailer;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +30,7 @@ class MemberSignupServiceTest extends IntegrationTest {
     @Autowired MemberSignupService memberSignupService;
 
     @SpyBean TempMemberRepository tempMemberRepository;
-    //    @SpyBean MemberRepository memberRepository;
+    @SpyBean MemberRepository memberRepository;
 
     @SpyBean PasswordEncoder passwordEncoder;
     @SpyBean Mailer mailer;
@@ -50,6 +53,44 @@ class MemberSignupServiceTest extends IntegrationTest {
         given(member);
 
         Executable action = () -> memberSignupService.signup(EMAIL, RAW_PASSWORD);
+
+        assertThrows(RequestException.class, action);
+    }
+
+
+    @Test
+    @DisplayName("인증 - 정식 이전")
+    void verify_onSuccess_transfers() {
+        TempMember tempMember = TestingMembers.temp();
+        given(tempMember);
+
+        Long id = tempMember.getId();
+        String token = tempMember.getVerificationToken();
+        memberSignupService.verify(id, token);
+
+        then(memberRepository).should().save(any());
+        then(tempMemberRepository).should().delete(any());
+    }
+
+    @Test
+    @DisplayName("인증(가입신청 전) - 리소스 없음 예외")
+    void verify_beforeSignup_throwsException() {
+        Long id = 1L;
+        String token = "token";
+        Executable action = () -> memberSignupService.verify(id, token);
+
+        assertThrows(NotFoundException.class, action);
+    }
+
+    @Test
+    @DisplayName("인증(잘못된 토큰) - 요청 예외")
+    void verify_withInvalidToken_throwsException() {
+        TempMember tempMember = TestingMembers.temp();
+        given(tempMember);
+
+        Long id = tempMember.getId();
+        String token = "invalid";
+        Executable action = () -> memberSignupService.verify(id, token);
 
         assertThrows(RequestException.class, action);
     }

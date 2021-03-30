@@ -3,6 +3,7 @@ package com.github.suloginscene.authserver.testing.data;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.Password;
+import com.github.suloginscene.authserver.member.domain.temp.TempMember;
 import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -20,6 +21,10 @@ public class TestingMembers {
     private static final String ENCODED_PASSWORD_VALUE = "{bcrypt}$2a$10$FmaPpqvyiPMG00XhujnEaOK5MBk46lYgIhgmjQ.zsse7E0osgEs4C";
     private static final Password ENCODED_PASSWORD = new Password(ENCODED_PASSWORD_VALUE);
 
+
+    public static TempMember temp() {
+        return new TempMember(EMAIL, ENCODED_PASSWORD);
+    }
 
     public static Member create() {
         return new Member(EMAIL, ENCODED_PASSWORD);
