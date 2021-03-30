@@ -26,4 +26,8 @@ public class MemberConfiguringService {
         member.changePassword(newPassword);
     }
 
+    public void withdraw(Long id) {
+        memberRepository.deleteById(id);
+    }
+
 }

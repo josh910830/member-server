@@ -32,6 +32,10 @@ public class MemberRepository {
         return memberJpaRepository.existsByEmail(email);
     }
 
+    public void deleteById(Long id) {
+        memberJpaRepository.deleteById(id);
+    }
+
     public void deleteAll() {
         profileChecker.checkTest();
         memberJpaRepository.deleteAll();

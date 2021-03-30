@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static com.github.suloginscene.authserver.testing.data.TestingMembers.EMAIL_VALUE;
 import static com.github.suloginscene.authserver.testing.data.TestingMembers.RAW_PASSWORD_VALUE;
+import static com.github.suloginscene.test.RequestBuilder.ofDelete;
 import static com.github.suloginscene.test.RequestBuilder.ofGet;
 import static com.github.suloginscene.test.RequestBuilder.ofPost;
 import static com.github.suloginscene.test.RequestBuilder.ofPut;
@@ -153,6 +154,22 @@ class MemberRestControllerTest extends ControllerTest {
                 ofPut(URL).jwt(jwt).json(request).build());
 
         when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("회원탈퇴 성공 - 204")
+    void withdraw_onSuccess_returns204() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        String jwt = jwtFactory.create(member.getId());
+
+        ResultActions when = mockMvc.perform(
+                ofDelete(URL).jwt(jwt).build());
+
+        ResultActions then = when.andExpect(status().isNoContent());
+
+        then.andDo(document("delete-member"));
     }
 
 }
