@@ -108,7 +108,7 @@ operation::signup[snippets='http-request,http-response']
 operation::verify[snippets='http-request,http-response']
 
 [[representation-member-my-info]]
-==== 회원 조회 (내 정보)
+==== 내 정보
 
 operation::my-info[snippets='http-request,http-response']
 

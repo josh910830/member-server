@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.member.api.representation.MemberRepresentation;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.application.MemberConfiguringService;
@@ -54,10 +55,11 @@ public class MemberRestController {
     }
 
     @GetMapping("/my-info")
-    ResponseEntity<MemberData> myInfo(@Authenticated Long memberId) {
-        MemberData memberData = memberFindingService.findMember(memberId);
+    ResponseEntity<MemberRepresentation> myInfo(@Authenticated Long memberId) {
+        MemberData member = memberFindingService.findMember(memberId);
 
-        return ResponseEntity.ok().body(memberData);
+        MemberRepresentation memberRepresentation = new MemberRepresentation(member);
+        return ResponseEntity.ok().body(memberRepresentation);
     }
 
     @GetMapping("/on-forget-password")
