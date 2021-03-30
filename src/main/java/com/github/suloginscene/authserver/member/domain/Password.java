@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -9,6 +10,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 
 @Embeddable
+@EqualsAndHashCode
 @NoArgsConstructor(access = PROTECTED)
 public class Password {
 

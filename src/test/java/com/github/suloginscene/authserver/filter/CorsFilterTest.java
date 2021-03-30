@@ -19,6 +19,8 @@ public class CorsFilterTest extends ControllerTest {
 
     static final String URL = "/";
 
+    String jwt;
+
     @Value("${jwt.urls}")
     String urls;
 
@@ -27,6 +29,8 @@ public class CorsFilterTest extends ControllerTest {
 
     @BeforeEach
     void setup() {
+        jwt = jwtFactory.create(1L);
+
         validOrigin = urls.split(",")[0];
         invalidOrigin = "http://invalid.com";
     }

@@ -3,6 +3,7 @@ package com.github.suloginscene.authserver.member.domain;
 import com.github.suloginscene.exception.RequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 
 @Entity
+@ToString(of = {"id", "email"})
 @NoArgsConstructor(access = PROTECTED)
 public class Member {
 
@@ -31,11 +33,16 @@ public class Member {
         this.password = password;
     }
 
+
     public void checkPassword(Password rawPassword, PasswordEncoder passwordEncoder) {
         boolean matches = password.matches(rawPassword, passwordEncoder);
         if (!matches) {
-            throw new RequestException("password not matched for " + email);
+            throw new RequestException("password not matched for " + this);
         }
+    }
+
+    public void changePassword(Password newPassword) {
+        password = newPassword;
     }
 
 }

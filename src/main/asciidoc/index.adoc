@@ -15,7 +15,7 @@
 === HTTP 동사
 
 |===
-| `GET` | 조회
+| `GET` | 조회 또는 링크 인증
 | `POST` | 생성 또는 JWT 발급
 | `PUT` | 수정
 | `DELETE` | 삭제
@@ -71,27 +71,27 @@
 [[service-map]]
 === 지도
 
-// TODO
-//|===
-//| 인덱스 -> | 계정 등록 +
-//계정 목록 +
-//거래 실행 +
-//장부 조회 +
-//손익계산서 조회 +
-//재무상태표 조회
-//| 계정 목록 -> | 계정 조회
-//| 계정 조회 -> |계정 이름 변경 +
-//계정 예산 변경 +
-//계정 삭제
-//|===
+|===
+| 인덱스 -> | 회원 가입 (-> 인증 메일) +
+JWT 발급 +
+내 정보 +
+임시 비밀번호 발급 (-> 메일)
+| 인증 메일 -> | 이메일 인증
+| 내 정보 -> | 비밀번호 변경 +
+회원 탈퇴
+|===
 
+// TODO withdraw
+// TODO send verificationMail
+// TODO send tempPassword
+// TODO get verificationLink
+// TODO index
 [[representation]]
 == 표현
 
 [[representation-root]]
 === 루트
 
-// TODO
 //[[representation-root-index]]
 //==== 인덱스
 //
@@ -108,6 +108,6 @@
 operation::post-member[snippets='http-request,http-response']
 
 [[representation-member-get]]
-==== 회원(내 정보) 조회
+==== 회원 조회 (내 정보)
 
 operation::get-member[snippets='http-request,http-response']

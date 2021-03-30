@@ -1,6 +1,8 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
+import com.github.suloginscene.authserver.member.application.MemberConfiguringService;
 import com.github.suloginscene.authserver.member.application.MemberFindService;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.application.data.MemberData;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,7 @@ public class MemberRestController {
 
     private final MemberSignupService memberSignupService;
     private final MemberFindService memberFindService;
+    private final MemberConfiguringService memberConfiguringService;
 
 
     @PostMapping
@@ -47,6 +51,16 @@ public class MemberRestController {
         MemberData memberData = memberFindService.findMember(memberId);
 
         return ResponseEntity.ok().body(memberData);
+    }
+
+    @PutMapping
+    ResponseEntity<Void> changePassword(@RequestBody @Valid MemberPasswordChangeRequest request,
+                                        @Authenticated Long memberId) {
+        Password newPassword = new Password(request.getNewPassword());
+
+        memberConfiguringService.changePassword(memberId, newPassword);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

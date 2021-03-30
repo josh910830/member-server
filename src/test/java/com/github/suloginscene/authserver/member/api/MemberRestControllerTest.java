@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.base.ControllerTest;
@@ -12,6 +13,7 @@ import static com.github.suloginscene.authserver.testing.data.TestingMembers.EMA
 import static com.github.suloginscene.authserver.testing.data.TestingMembers.RAW_PASSWORD_VALUE;
 import static com.github.suloginscene.test.RequestBuilder.ofGet;
 import static com.github.suloginscene.test.RequestBuilder.ofPost;
+import static com.github.suloginscene.test.RequestBuilder.ofPut;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,7 +26,7 @@ class MemberRestControllerTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("POST 성공 - 201")
+    @DisplayName("회원가입 성공 - 201")
     void signup_onSuccess_returns201() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
@@ -36,7 +38,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("POST 실패(이메일 null) - 400")
+    @DisplayName("회원가입 실패(이메일 null) - 400")
     void signup_withNullEmail_returns400() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(null, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
@@ -46,7 +48,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("POST 실패(비밀번호 null) - 400")
+    @DisplayName("회원가입 실패(비밀번호 null) - 400")
     void signup_withNullPassword_returns400() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, null);
         ResultActions when = mockMvc.perform(
@@ -56,7 +58,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("POST 실패(이메일 형식) - 400")
+    @DisplayName("회원가입 실패(이메일 형식) - 400")
     void signup_withInvalidEmail_returns400() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest("notEmail", RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
@@ -66,7 +68,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("POST 실패(비밀번호 길이) - 400")
+    @DisplayName("회원가입 실패(비밀번호 길이) - 400")
     void signup_withInvalidPassword_returns400() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, "short");
         ResultActions when = mockMvc.perform(
@@ -76,7 +78,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("POST 실패(이메일 중복) - 400")
+    @DisplayName("회원가입 실패(이메일 중복) - 400")
     void signup_onDuplicate_returns400() throws Exception {
         Member member = TestingMembers.create();
         given(member);
@@ -90,7 +92,7 @@ class MemberRestControllerTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("GET 성공 - 200")
+    @DisplayName("내 정보 조회 성공 - 200")
     void myInfo_onSuccess_returns200() throws Exception {
         Member member = TestingMembers.create();
         given(member);
@@ -105,17 +107,52 @@ class MemberRestControllerTest extends ControllerTest {
         then.andDo(document("get-member"));
     }
 
+
     @Test
-    @DisplayName("GET 실패(리소스 없음) - 404")
-    void myInfo_onNonExistent_returns404() throws Exception {
-        Long nonExistentId = Long.MAX_VALUE;
+    @DisplayName("비밀번호 변경 성공 - 204")
+    void changePassword_onSuccess_returns204() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
 
-        String jwt = jwtFactory.create(nonExistentId);
+        String jwt = jwtFactory.create(member.getId());
 
+        MemberPasswordChangeRequest request = new MemberPasswordChangeRequest("newPassword");
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofPut(URL).jwt(jwt).json(request).build());
 
-        when.andExpect(status().isNotFound());
+        ResultActions then = when.andExpect(status().isNoContent());
+
+        then.andDo(document("put-member-password"));
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 실패(비밀번호 null) - 400")
+    void changePassword_withNullPassword_returns400() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        String jwt = jwtFactory.create(member.getId());
+
+        MemberPasswordChangeRequest request = new MemberPasswordChangeRequest(null);
+        ResultActions when = mockMvc.perform(
+                ofPut(URL).jwt(jwt).json(request).build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 실패(비밀번호 길이) - 400")
+    void changePassword_withInvalidPassword_returns400() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        String jwt = jwtFactory.create(member.getId());
+
+        MemberPasswordChangeRequest request = new MemberPasswordChangeRequest("short");
+        ResultActions when = mockMvc.perform(
+                ofPut(URL).jwt(jwt).json(request).build());
+
+        when.andExpect(status().isBadRequest());
     }
 
 }

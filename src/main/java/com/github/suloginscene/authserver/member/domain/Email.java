@@ -1,6 +1,8 @@
 package com.github.suloginscene.authserver.member.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 
@@ -8,6 +10,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 
 @Embeddable
+@EqualsAndHashCode @ToString
 @NoArgsConstructor(access = PROTECTED)
 public class Email {
 
