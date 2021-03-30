@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 
-// TODO changeNames -ing
 @Service
 @Transactional
 @RequiredArgsConstructor

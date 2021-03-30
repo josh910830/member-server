@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DisplayName("회원 찾기 서비스")
-class MemberFindServiceTest extends IntegrationTest {
+class MemberFindingServiceTest extends IntegrationTest {
 
-    @Autowired MemberFindService memberFindService;
+    @Autowired MemberFindingService memberFindingService;
 
 
     @Test
@@ -27,7 +27,7 @@ class MemberFindServiceTest extends IntegrationTest {
         given(member);
 
         Long id = member.getId();
-        MemberData memberData = memberFindService.findMember(id);
+        MemberData memberData = memberFindingService.findMember(id);
 
         assertThat(memberData).hasNoNullFieldsOrProperties();
     }
@@ -36,7 +36,7 @@ class MemberFindServiceTest extends IntegrationTest {
     @DisplayName("리소스 없음 - 예외 발생")
     void find_onNonExistent_throwsException() {
         Long nonExistentId = Long.MAX_VALUE;
-        Executable action = () -> memberFindService.findMember(nonExistentId);
+        Executable action = () -> memberFindingService.findMember(nonExistentId);
 
         assertThrows(NotFoundException.class, action);
     }

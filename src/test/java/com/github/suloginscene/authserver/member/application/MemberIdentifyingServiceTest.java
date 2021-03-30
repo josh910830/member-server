@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DisplayName("회원 인증 서비스")
-class MemberIdentificationServiceTest extends IntegrationTest {
+class MemberIdentifyingServiceTest extends IntegrationTest {
 
-    @Autowired MemberIdentificationService memberIdentificationService;
+    @Autowired MemberIdentifyingService memberIdentifyingService;
 
 
     @Test
@@ -30,7 +30,7 @@ class MemberIdentificationServiceTest extends IntegrationTest {
         Member member = TestingMembers.create();
         given(member);
 
-        Long id = memberIdentificationService.identify(EMAIL, RAW_PASSWORD);
+        Long id = memberIdentifyingService.identify(EMAIL, RAW_PASSWORD);
 
         assertThat(id).isNotNull();
     }
@@ -42,7 +42,7 @@ class MemberIdentificationServiceTest extends IntegrationTest {
         given(member);
 
         Email nonExistent = new Email("non-existent@email.com");
-        Executable action = () -> memberIdentificationService.identify(nonExistent, RAW_PASSWORD);
+        Executable action = () -> memberIdentifyingService.identify(nonExistent, RAW_PASSWORD);
 
         assertThrows(NotFoundException.class, action);
     }
@@ -54,7 +54,7 @@ class MemberIdentificationServiceTest extends IntegrationTest {
         given(member);
 
         Password wrong = new Password("wrongPassword");
-        Executable action = () -> memberIdentificationService.identify(EMAIL, wrong);
+        Executable action = () -> memberIdentifyingService.identify(EMAIL, wrong);
 
         assertThrows(RequestException.class, action);
     }

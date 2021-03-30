@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MemberIdentificationService {
+public class MemberIdentifyingService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

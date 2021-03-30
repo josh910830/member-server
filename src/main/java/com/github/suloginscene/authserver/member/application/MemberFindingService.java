@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MemberFindService {
+public class MemberFindingService {
 
     private final MemberRepository memberRepository;
 
