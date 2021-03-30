@@ -76,24 +76,23 @@
 JWT 발급 +
 내 정보 +
 비밀번호 분실 처리 (-> 메일)
-| 인증 메일 -> | 이메일 인증
+| (인증 메일 ->) | 이메일 인증
 | 내 정보 -> | 비밀번호 변경 +
 회원 탈퇴
 |===
 
-// TODO index
 [[representation]]
 == 표현
 
 [[representation-root]]
 === 루트
 
-//[[representation-root-index]]
-//==== 인덱스
-//
-//서비스의 진입점으로, 이용할 수 있는 링크들을 나열한다.
-//
-//operation::index[snippets='http-request,http-response']
+[[representation-root-index]]
+==== 인덱스
+
+서비스의 진입점으로, 이용할 수 있는 링크들을 나열한다.
+
+operation::index[snippets='http-request,http-response']
 
 [[representation-member]]
 === 회원
