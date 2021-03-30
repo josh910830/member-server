@@ -59,7 +59,7 @@ public class MemberSignupService {
         String queryString = "id=" + id + "&token=" + token;
 
         String address = appProperties.getAddress();
-        String link = address + "/verify?" + queryString;
+        String link = address + "/api/members/verify?" + queryString;
         String content = "회원가입 인증 링크: " + link;
 
         return new MailMessage(recipient, title, content);
