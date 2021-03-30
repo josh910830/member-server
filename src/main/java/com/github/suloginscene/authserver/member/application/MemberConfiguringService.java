@@ -32,7 +32,7 @@ public class MemberConfiguringService {
     }
 
 
-    public void issuePassword(Email email) {
+    public void onForgetPassword(Email email) {
         String randomString = UUID.randomUUID().toString();
         Password newPassword = new Password(randomString);
 

@@ -36,7 +36,7 @@ class MemberRestControllerTest extends ControllerTest {
 
         ResultActions then = when.andExpect(status().isCreated());
 
-        then.andDo(document("post-member"));
+        then.andDo(document("signup"));
     }
 
     @Test
@@ -107,7 +107,7 @@ class MemberRestControllerTest extends ControllerTest {
 
         ResultActions then = when.andExpect(status().isOk());
 
-        then.andDo(document("verify-member"));
+        then.andDo(document("verify"));
     }
 
     @Test
@@ -129,34 +129,34 @@ class MemberRestControllerTest extends ControllerTest {
         String jwt = jwtFactory.create(member.getId());
 
         ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
+                ofGet(URL + "/my-info").jwt(jwt).build());
 
         ResultActions then = when.andExpect(status().isOk());
 
-        then.andDo(document("get-member"));
+        then.andDo(document("my-info"));
     }
 
 
     @Test
-    @DisplayName("임시 비밀번호 발급 - 200")
-    void issuePassword_onSuccess_returns200() throws Exception {
+    @DisplayName("비밀번호 분실 처리 - 200")
+    void onForgetPassword_onSuccess_returns200() throws Exception {
         Member member = TestingMembers.create();
         given(member);
 
         String queryString = "email=" + member.getEmail().get();
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/issue-password?" + queryString).build());
+                ofGet(URL + "/on-forget-password?" + queryString).build());
 
         ResultActions then = when.andExpect(status().isOk());
 
-        then.andDo(document("issue-member-password"));
+        then.andDo(document("on-forget-password"));
     }
 
     @Test
-    @DisplayName("임시 비밀번호 발급(쿼리스트링 없음) - 400")
-    void issuePassword_withNoQueryString_returns400() throws Exception {
+    @DisplayName("비밀번호 분실 처리(쿼리스트링 없음) - 400")
+    void onForgetPassword_withNoQueryString_returns400() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/issue-password").build());
+                ofGet(URL + "/on-forget-password").build());
 
         when.andExpect(status().isBadRequest());
     }
@@ -176,7 +176,7 @@ class MemberRestControllerTest extends ControllerTest {
 
         ResultActions then = when.andExpect(status().isNoContent());
 
-        then.andDo(document("put-member-password"));
+        then.andDo(document("change-password"));
     }
 
     @Test
@@ -222,7 +222,7 @@ class MemberRestControllerTest extends ControllerTest {
 
         ResultActions then = when.andExpect(status().isNoContent());
 
-        then.andDo(document("delete-member"));
+        then.andDo(document("withdraw"));
     }
 
 }

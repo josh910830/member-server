@@ -45,13 +45,13 @@ class MemberConfiguringServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("임시 비밀번호 발급 - 인코딩/변경/메일")
-    void issuePassword_onSuccess_encodesUpdatesSends() {
+    @DisplayName("비밀번호 분실 처리 - 인코딩/변경/메일")
+    void onForgetPassword_onSuccess_encodesUpdatesSends() {
         Member member = TestingMembers.create();
         given(member);
 
         Email email = member.getEmail();
-        memberConfiguringService.issuePassword(email);
+        memberConfiguringService.onForgetPassword(email);
 
         then(passwordEncoder).should().encode(any());
         assertThrows(RequestException.class, () -> sync(member).checkPassword(RAW_PASSWORD, passwordEncoder));
@@ -59,10 +59,10 @@ class MemberConfiguringServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("임시 비밀번호 발급(회원 없음) - 리소스 없음 예외")
-    void issuePassword_onNonExistent_throwsException() {
+    @DisplayName("비밀번호 분실 처리(회원 없음) - 리소스 없음 예외")
+    void onForgetPassword_onNonExistent_throwsException() {
         Email email = new Email("non-existent@email.com");
-        Executable action = () -> memberConfiguringService.issuePassword(email);
+        Executable action = () -> memberConfiguringService.onForgetPassword(email);
 
         assertThrows(NotFoundException.class, action);
     }

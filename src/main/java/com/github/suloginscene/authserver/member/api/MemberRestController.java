@@ -53,18 +53,18 @@ public class MemberRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @GetMapping("/my-info")
     ResponseEntity<MemberData> myInfo(@Authenticated Long memberId) {
         MemberData memberData = memberFindingService.findMember(memberId);
 
         return ResponseEntity.ok().body(memberData);
     }
 
-    @GetMapping("/issue-password")
-    ResponseEntity<Void> issuePassword(@RequestParam String email) {
+    @GetMapping("/on-forget-password")
+    ResponseEntity<Void> onForgetPassword(@RequestParam String email) {
         Email target = new Email(email);
 
-        memberConfiguringService.issuePassword(target);
+        memberConfiguringService.onForgetPassword(target);
 
         return ResponseEntity.ok().build();
     }
