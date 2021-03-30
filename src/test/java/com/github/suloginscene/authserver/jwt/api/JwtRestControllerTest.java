@@ -41,7 +41,7 @@ public class JwtRestControllerTest extends ControllerTest {
         ResultActions then = when.andExpect(status().isOk())
                 .andExpect(jwtAudienceIs(member.getId()));
 
-        then.andDo(document("jwt"));
+        then.andDo(document("issue-jwt"));
     }
 
     private ResultMatcher jwtAudienceIs(Long id) {

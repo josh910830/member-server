@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.member.api.request.SignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.application.MemberFindService;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
 import com.github.suloginscene.authserver.member.application.data.MemberData;
@@ -31,14 +31,14 @@ public class MemberRestController {
 
 
     @PostMapping
-    ResponseEntity<Void> signup(@RequestBody @Valid SignupRequest request) {
+    ResponseEntity<Void> signup(@RequestBody @Valid MemberSignupRequest request) {
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
         // TODO confirm password in fe
 
-        Long id = memberSignupService.signup(email, password);
+        memberSignupService.signup(email, password);
 
-        URI location = linkTo(this.getClass()).slash(id).toUri();
+        URI location = linkTo(this.getClass()).toUri();
         return ResponseEntity.created(location).build();
     }
 

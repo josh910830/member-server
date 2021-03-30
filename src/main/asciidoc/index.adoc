@@ -1,0 +1,113 @@
+= 회원 REST API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+[[overview]]
+== 개요
+
+회원 API
+
+[[overview-http-verbs]]
+=== HTTP 동사
+
+|===
+| `GET` | 조회
+| `POST` | 생성 또는 JWT 발급
+| `PUT` | 수정
+| `DELETE` | 삭제
+|===
+
+[[overview-http-status-codes]]
+=== HTTP 상태 코드
+
+|===
+| `200 OK` | GET 성공
+| `201 Created` | POST 성공
+| `204 Not Found` | PUT & DELETE 성공
+| `400 Bad Request` | 입력 값 또는 리소스 상태 이상
+| `401 Unauthorized` | JWT 관련 이상
+| `403 Forbidden` | Origin 또는 리소스 권한 이상
+| `404 Not Found` | 미지원 URL 또는 해당 리소스 없음
+| `500 Internal Server Error` | 서버 오류
+|===
+
+[[overview-hypermedia]]
+=== 하이퍼미디어
+
+`HAL_JSON` 형식 응답 본문에 관련된 `_links` 를 포함한다.
+
+[[overview-errors]]
+=== 오류
+
+400 오류는 아래 형태의 JSON 응답을 갖는다. +
+(기타 오류는 보안을 위해 응답을 제공하지 않고, 로그만을 기록한다.)
+
+|===
+| `error` | 종류 (예외 클래스 이름, RequestException 구현체)
+| `errorDescription` | 설명 (복수 문장이 필요한 경우 ","로 구분)
+|===
+
+[[service]]
+== 서비스
+
+[[service-url]]
+=== URL
+
+이 서비스는 인증된 사용자를 대상으로 하며, 타인의 자원에 대한 접근은 허용되지 않는다. +
+따라서 URL 자체가 아니라, 인증정보와 결합된 URL이 자원을 가리킨다. +
+예를 들어 "/api/members"에 관한 GET 요청은 서비스의 모든 회원이 아니라, 현재 사용자 한 명의 정보를 가져온다.
+
+[[service-modification]]
+=== 변경
+
+회원은 이메일 인증을 거쳐 정식으로 등록된다. +
+비밀번호 분실 시 이메일로 임시 비밀번호를 발급하며, 로그인 후 비밀번호를 수정할 수 있다. +
+이메일 변경은 아직 지원하지 않는다.
+
+[[service-map]]
+=== 지도
+
+// TODO
+//|===
+//| 인덱스 -> | 계정 등록 +
+//계정 목록 +
+//거래 실행 +
+//장부 조회 +
+//손익계산서 조회 +
+//재무상태표 조회
+//| 계정 목록 -> | 계정 조회
+//| 계정 조회 -> |계정 이름 변경 +
+//계정 예산 변경 +
+//계정 삭제
+//|===
+
+[[representation]]
+== 표현
+
+[[representation-root]]
+=== 루트
+
+// TODO
+//[[representation-root-index]]
+//==== 인덱스
+//
+//서비스의 진입점으로, 이용할 수 있는 링크들을 나열한다.
+//
+//operation::index[snippets='http-request,http-response']
+
+[[representation-member]]
+=== 회원
+
+[[representation-member-post]]
+==== 회원 가입
+
+operation::post-member[snippets='http-request,http-response']
+
+[[representation-member-get]]
+==== 회원(내 정보) 조회
+
+operation::get-member[snippets='http-request,http-response']

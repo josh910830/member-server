@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 
 @Data
-public class SignupRequest {
+public class MemberSignupRequest {
 
     @NotNull
     @Email

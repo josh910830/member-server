@@ -24,9 +24,8 @@ public class MemberRepository {
                 .orElseThrow(() -> new NotFoundException(Member.class, email));
     }
 
-    public Long save(Member member) {
-        Member saved = memberJpaRepository.save(member);
-        return saved.getId();
+    public void save(Member member) {
+        memberJpaRepository.save(member);
     }
 
     public boolean existsByEmail(Email email) {

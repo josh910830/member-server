@@ -20,12 +20,12 @@ public class MemberSignupService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public Long signup(Email email, Password password) {
+    public void signup(Email email, Password password) {
         checkDuplicated(email);
         password = password.encoded(passwordEncoder);
 
         Member created = new Member(email, password);
-        return memberRepository.save(created);
+        memberRepository.save(created);
     }
 
     private void checkDuplicated(Email email) {

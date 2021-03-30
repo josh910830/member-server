@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
-import com.github.suloginscene.authserver.member.api.request.SignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.testing.base.ControllerTest;
 import com.github.suloginscene.authserver.testing.data.TestingMembers;
@@ -26,19 +26,19 @@ class MemberRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("POST 성공 - 201")
     void signup_onSuccess_returns201() throws Exception {
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
         ResultActions then = when.andExpect(status().isCreated());
 
-        then.andDo(document("signup"));
+        then.andDo(document("post-member"));
     }
 
     @Test
     @DisplayName("POST 실패(이메일 null) - 400")
     void signup_withNullEmail_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(null, RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest(null, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
@@ -48,7 +48,7 @@ class MemberRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("POST 실패(비밀번호 null) - 400")
     void signup_withNullPassword_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, null);
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, null);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
@@ -58,7 +58,7 @@ class MemberRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("POST 실패(이메일 형식) - 400")
     void signup_withInvalidEmail_returns400() throws Exception {
-        SignupRequest request = new SignupRequest("notEmail", RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest("notEmail", RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
@@ -68,7 +68,7 @@ class MemberRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("POST 실패(비밀번호 길이) - 400")
     void signup_withInvalidPassword_returns400() throws Exception {
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, "short");
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, "short");
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
@@ -81,7 +81,7 @@ class MemberRestControllerTest extends ControllerTest {
         Member member = TestingMembers.create();
         given(member);
 
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
@@ -102,7 +102,7 @@ class MemberRestControllerTest extends ControllerTest {
 
         ResultActions then = when.andExpect(status().isOk());
 
-        then.andDo(document("get_member"));
+        then.andDo(document("get-member"));
     }
 
     @Test

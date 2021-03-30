@@ -1,6 +1,6 @@
 package com.github.suloginscene.authserver.filter;
 
-import com.github.suloginscene.authserver.member.api.request.SignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.testing.base.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ public class JwtPermitAllPathCorsFilter extends ControllerTest {
     @Test
     @DisplayName("가입 (허용출처) - 201")
     void postMember_fromValidOrigin_returns201() throws Exception {
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).origin(validOrigin).json(request).build());
 
@@ -45,7 +45,7 @@ public class JwtPermitAllPathCorsFilter extends ControllerTest {
     @Test
     @DisplayName("가입 (비허용 출처) - 403")
     void postMember_fromInvalidOrigin_returns403() throws Exception {
-        SignupRequest request = new SignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
+        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).origin(invalidOrigin).json(request).build());
 

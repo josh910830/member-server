@@ -1,6 +1,7 @@
 package com.github.suloginscene.authserver.member.application;
 
 import com.github.suloginscene.authserver.member.domain.Member;
+import com.github.suloginscene.authserver.member.domain.MemberRepository;
 import com.github.suloginscene.authserver.testing.base.IntegrationTest;
 import com.github.suloginscene.authserver.testing.data.TestingMembers;
 import com.github.suloginscene.exception.RequestException;
@@ -9,12 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.github.suloginscene.authserver.testing.data.TestingMembers.EMAIL;
 import static com.github.suloginscene.authserver.testing.data.TestingMembers.RAW_PASSWORD;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 
@@ -23,15 +25,16 @@ import static org.mockito.BDDMockito.then;
 class MemberSignupServiceTest extends IntegrationTest {
 
     @Autowired MemberSignupService memberSignupService;
+    @SpyBean MemberRepository memberRepository;
     @MockBean PasswordEncoder passwordEncoder;
 
 
     @Test
-    @DisplayName("정상 - Id 반환")
+    @DisplayName("정상")
     void signup_onSuccess_returnsId() {
-        Long id = memberSignupService.signup(EMAIL, RAW_PASSWORD);
+        memberSignupService.signup(EMAIL, RAW_PASSWORD);
 
-        assertThat(id).isNotNull();
+        then(memberRepository).should().save(any());
     }
 
     @Test
