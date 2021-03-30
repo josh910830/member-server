@@ -81,9 +81,8 @@ JWT 발급 +
 회원 탈퇴
 |===
 
-// TODO send verificationMail
-// TODO send tempPassword
 // TODO get verificationLink
+// TODO send tempPassword
 // TODO index
 [[representation]]
 == 표현

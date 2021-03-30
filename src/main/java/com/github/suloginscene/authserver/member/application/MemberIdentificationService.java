@@ -20,14 +20,10 @@ public class MemberIdentificationService {
 
 
     public Long identify(Email email, Password password) {
-        Member member = findMember(email);
+        Member member = memberRepository.findByEmail(email);
         member.checkPassword(password, passwordEncoder);
 
         return member.getId();
-    }
-
-    private Member findMember(Email email) {
-        return memberRepository.findByEmail(email);
     }
 
 }

@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.testing.base;
 
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
+import com.github.suloginscene.authserver.member.domain.temp.TempMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public abstract class IntegrationTest {
 
     @Autowired MemberRepository memberRepository;
+    @Autowired TempMemberRepository tempMemberRepository;
 
 
     protected void given(Member... members) {
@@ -36,6 +38,7 @@ public abstract class IntegrationTest {
     final void clearAllRepositories() {
         logAround("clear", () -> {
             memberRepository.deleteAll();
+            tempMemberRepository.deleteAll();
         });
     }
 
