@@ -18,7 +18,7 @@ public class MemberRepresentation extends RepresentationModel<MemberRepresentati
     public MemberRepresentation(MemberData member) {
         email = member.getEmail();
 
-        add(linkTo(MemberRestController.class).withRel("change-password"));
+        add(linkTo(MemberRestController.class).withRel("changePassword"));
         add(linkTo(MemberRestController.class).withRel("withdraw"));
     }
 

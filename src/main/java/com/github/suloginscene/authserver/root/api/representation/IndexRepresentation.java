@@ -16,11 +16,11 @@ public class IndexRepresentation extends RepresentationModel<IndexRepresentation
 
         add(linkTo(MemberRestController.class).withRel("signup"));
 
-        add(linkTo(JwtRestController.class).withRel("issue-jwt"));
+        add(linkTo(JwtRestController.class).withRel("issueJwt"));
 
-        add(linkTo(MemberRestController.class).slash("/my-info").withRel("my-info"));
+        add(linkTo(MemberRestController.class).slash("/my-info").withRel("myInfo"));
 
-        add(linkTo(MemberRestController.class).slash("/on-forget-password").withRel("on-forget-password"));
+        add(linkTo(MemberRestController.class).slash("/on-forget-password").withRel("onForgetPassword"));
 
     }
 

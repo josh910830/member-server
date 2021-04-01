@@ -86,9 +86,9 @@ public class AcceptanceScenarioTest {
 
         setRelPathMap(result);
         assertThat(relPathMap.get("signup")).isEqualTo("/api/members");
-        assertThat(relPathMap.get("issue-jwt")).isEqualTo("/jwt");
-        assertThat(relPathMap.get("my-info")).isEqualTo("/api/members/my-info");
-        assertThat(relPathMap.get("on-forget-password")).isEqualTo("/api/members/on-forget-password");
+        assertThat(relPathMap.get("issueJwt")).isEqualTo("/jwt");
+        assertThat(relPathMap.get("myInfo")).isEqualTo("/api/members/my-info");
+        assertThat(relPathMap.get("onForgetPassword")).isEqualTo("/api/members/on-forget-password");
     }
 
 
@@ -128,7 +128,7 @@ public class AcceptanceScenarioTest {
     void onForgetPassword() throws Exception {
         doAnswer(proxiedVoid).when(mailer).send(any());
 
-        String url = relPathMap.get("on-forget-password") + "?email=" + email;
+        String url = relPathMap.get("onForgetPassword") + "?email=" + email;
 
         ResultActions onForgetPassword = mockMvc.perform(ofGet(url).build());
 
@@ -147,7 +147,7 @@ public class AcceptanceScenarioTest {
     @Test
     @DisplayName("JWT 발급 - 200")
     void issueJwt() throws Exception {
-        String url = relPathMap.get("issue-jwt");
+        String url = relPathMap.get("issueJwt");
 
         JwtRequest request = new JwtRequest(email, password);
         ResultActions issueJwt = mockMvc.perform(ofPost(url).json(request).build());
@@ -165,7 +165,7 @@ public class AcceptanceScenarioTest {
     @Test
     @DisplayName("내 정보 - 200")
     void myInfo() throws Exception {
-        String url = relPathMap.get("my-info");
+        String url = relPathMap.get("myInfo");
 
         ResultActions getMyInfo = mockMvc.perform(ofGet(url).jwt(jwt).build());
 
@@ -173,7 +173,7 @@ public class AcceptanceScenarioTest {
 
         setRelPathMap(result);
         assertThat(toResponseAsJsonMap(result).get("email")).isEqualTo("test@email.com");
-        assertThat(relPathMap.get("change-password")).isEqualTo("/api/members");
+        assertThat(relPathMap.get("changePassword")).isEqualTo("/api/members");
         assertThat(relPathMap.get("withdraw")).isEqualTo("/api/members");
     }
 
@@ -181,7 +181,7 @@ public class AcceptanceScenarioTest {
     @Test
     @DisplayName("비밀번호 변경 - 200")
     void changePassword() throws Exception {
-        String url = relPathMap.get("change-password");
+        String url = relPathMap.get("changePassword");
 
         password = "newPassword";
         MemberPasswordChangeRequest request = new MemberPasswordChangeRequest(password);
@@ -189,7 +189,7 @@ public class AcceptanceScenarioTest {
 
         changePassword.andExpect(status().isNoContent());
 
-        mockMvc.perform(ofPost(relPathMap.get("issue-jwt")).json(new JwtRequest(email, password)).build())
+        mockMvc.perform(ofPost(relPathMap.get("issueJwt")).json(new JwtRequest(email, password)).build())
                 .andExpect(status().isOk());
     }
 
@@ -203,7 +203,7 @@ public class AcceptanceScenarioTest {
 
         withdraw.andExpect(status().isNoContent());
 
-        mockMvc.perform(ofPost(relPathMap.get("issue-jwt")).json(new JwtRequest(email, password)).build())
+        mockMvc.perform(ofPost(relPathMap.get("issueJwt")).json(new JwtRequest(email, password)).build())
                 .andExpect(status().isNotFound());
     }
 
