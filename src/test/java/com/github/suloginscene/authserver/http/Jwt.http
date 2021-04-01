@@ -1,7 +1,0 @@
-POST localhost:8080/jwt
-Content-Type: application/json
-
-{
-  "username": "test@email.com",
-  "password": "password"
-}

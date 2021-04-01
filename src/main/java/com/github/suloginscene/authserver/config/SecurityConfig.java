@@ -39,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web
                 .ignoring()
-                .mvcMatchers(GET, "/api")
                 .mvcMatchers(GET, "/docs/index.html");
     }
 
@@ -53,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
+                .mvcMatchers(GET, "/api").permitAll()
                 .mvcMatchers(POST, "/api/members").permitAll()
                 .mvcMatchers(GET, "/api/members/verify").permitAll()
                 .mvcMatchers(GET, "/api/members/on-forget-password").permitAll()

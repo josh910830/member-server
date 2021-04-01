@@ -1,0 +1,45 @@
+### index
+GET localhost:8080/api
+Origin: http://localhost:3000
+
+### signup
+POST localhost:8080/api/members
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "password"
+}
+
+### verify
+GET localhost:8080/api/members/verify?id=1&token=ab671185-1993-4938-bcb9-caea6eae69a1
+
+### issue jwt
+POST localhost:8080/jwt
+Content-Type: application/json
+
+{
+  "username": "test@email.com",
+  "password": "password"
+}
+
+### my info
+GET localhost:8080/api/members/my-info
+X-AUTH-TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyIiwiaWF0IjoxNjE3Mjc0MTc4LCJleHAiOjE2MTcyNzc3Nzh9.IYko4my7ASZyHYVtrC2kW8uODpnx1sGNmZDy6wcKa-o
+
+
+### change password
+PUT localhost:8080/api/members
+X-AUTH-TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyIiwiaWF0IjoxNjE3Mjc0MTc4LCJleHAiOjE2MTcyNzc3Nzh9.IYko4my7ASZyHYVtrC2kW8uODpnx1sGNmZDy6wcKa-o
+Content-Type: application/json
+
+{
+  "newPassword": "newPassword"
+}
+
+### on forget password
+GET localhost:8080/api/members/on-forget-password?email=test@email.com
+
+### withdraw
+DELETE localhost:8080/api/members
+X-AUTH-TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyIiwiaWF0IjoxNjE3Mjc0MTc4LCJleHAiOjE2MTcyNzc3Nzh9.IYko4my7ASZyHYVtrC2kW8uODpnx1sGNmZDy6wcKa-o
