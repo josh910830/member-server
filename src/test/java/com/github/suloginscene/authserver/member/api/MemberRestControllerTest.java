@@ -18,6 +18,7 @@ import static com.github.suloginscene.test.RequestBuilder.ofPost;
 import static com.github.suloginscene.test.RequestBuilder.ofPut;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -131,7 +132,10 @@ class MemberRestControllerTest extends ControllerTest {
         ResultActions when = mockMvc.perform(
                 ofGet(URL + "/my-info").jwt(jwt).build());
 
-        ResultActions then = when.andExpect(status().isOk());
+        ResultActions then = when.andExpect(status().isOk())
+                .andExpect(jsonPath("email").exists())
+                .andExpect(jsonPath("_links.changePassword").exists())
+                .andExpect(jsonPath("_links.withdraw").exists());
 
         then.andDo(document("my-info"));
     }

@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.github.suloginscene.test.RequestBuilder.ofGet;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -23,7 +24,11 @@ class RootRestControllerTest extends ControllerTest {
         ResultActions when = mockMvc.perform(
                 ofGet(URL).build());
 
-        ResultActions then = when.andExpect(status().isOk());
+        ResultActions then = when.andExpect(status().isOk())
+                .andExpect(jsonPath("_links.signup").exists())
+                .andExpect(jsonPath("_links.issueJwt").exists())
+                .andExpect(jsonPath("_links.myInfo").exists())
+                .andExpect(jsonPath("_links.onForgetPassword").exists());
 
         then.andDo(document("index"));
     }
