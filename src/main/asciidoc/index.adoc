@@ -25,7 +25,7 @@
 === HTTP 상태 코드
 
 |===
-| `200 OK` | GET 성공 또는 임시생성(가입신청) 성공
+| `200 OK` | GET 성공 또는 가입신청/비밀번호분실처리 성공
 | `201 Created` | POST 성공
 | `204 Not Found` | PUT & DELETE 성공
 | `400 Bad Request` | 입력 값 또는 리소스 상태 이상

@@ -1,5 +1,6 @@
 package com.github.suloginscene.authserver.member.api;
 
+import com.github.suloginscene.authserver.member.api.request.MemberOnForgetPasswordRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
@@ -152,9 +153,9 @@ class MemberRestControllerTest extends ControllerTest {
         Member member = TestingMembers.create();
         given(member);
 
-        String queryString = "email=" + member.getEmail().get();
+        MemberOnForgetPasswordRequest request = new MemberOnForgetPasswordRequest(EMAIL_VALUE);
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/on-forget-password?" + queryString).build());
+                ofPost(URL + "/on-forget-password").json(request).build());
 
         ResultActions then = when.andExpect(status().isOk());
 
@@ -162,10 +163,10 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("비밀번호 분실 처리(쿼리스트링 없음) - 400")
+    @DisplayName("비밀번호 분실 처리(요 본문 없음) - 400")
     void onForgetPassword_withNoQueryString_returns400() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/on-forget-password").build());
+                ofPost(URL + "/on-forget-password").build());
 
         when.andExpect(status().isBadRequest());
     }

@@ -1,6 +1,7 @@
 package com.github.suloginscene.authserver;
 
 import com.github.suloginscene.authserver.jwt.api.request.JwtRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberOnForgetPasswordRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
@@ -141,9 +142,10 @@ public class AcceptanceScenarioTest {
     void onForgetPassword() throws Exception {
         doAnswer(proxiedVoid).when(mailer).send(any());
 
-        String url = relPathMap.get("onForgetPassword") + "?email=" + email;
+        String url = relPathMap.get("onForgetPassword");
 
-        ResultActions onForgetPassword = mockMvc.perform(ofGet(url).build());
+        MemberOnForgetPasswordRequest request = new MemberOnForgetPasswordRequest(email);
+        ResultActions onForgetPassword = mockMvc.perform(ofPost(url).json(request).build());
 
         onForgetPassword.andExpect(status().isOk());
 

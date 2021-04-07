@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.member.api.representation.MemberRepresentation;
 import com.github.suloginscene.authserver.member.api.representation.SignupRepresentation;
+import com.github.suloginscene.authserver.member.api.request.MemberOnForgetPasswordRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -69,9 +69,9 @@ public class MemberRestController {
         return ResponseEntity.ok().body(memberRepresentation);
     }
 
-    @GetMapping("/on-forget-password")
-    ResponseEntity<Void> onForgetPassword(@RequestParam String email) {
-        Email target = new Email(email);
+    @PostMapping("/on-forget-password")
+    ResponseEntity<Void> onForgetPassword(@RequestBody @Valid MemberOnForgetPasswordRequest request) {
+        Email target = new Email(request.getEmail());
 
         memberConfiguringService.onForgetPassword(target);
 
