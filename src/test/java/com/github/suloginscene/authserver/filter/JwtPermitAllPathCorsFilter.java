@@ -28,18 +28,18 @@ public class JwtPermitAllPathCorsFilter extends ControllerTest {
     @BeforeEach
     void setup() {
         validOrigin = urls.split(",")[0];
-        invalidOrigin = "http://invalid.com";
+        invalidOrigin = "https://invalid.com";
     }
 
 
     @Test
-    @DisplayName("가입 (허용출처) - 201")
-    void postMember_fromValidOrigin_returns201() throws Exception {
+    @DisplayName("가입 (허용출처) - 200")
+    void postMember_fromValidOrigin_returns200() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).origin(validOrigin).json(request).build());
 
-        when.andExpect(status().isCreated());
+        when.andExpect(status().isOk());
     }
 
     @Test

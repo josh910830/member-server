@@ -75,7 +75,7 @@ class MemberSignupServiceTest extends IntegrationTest {
     @Test
     @DisplayName("인증(가입신청 전) - 리소스 없음 예외")
     void verify_beforeSignup_throwsException() {
-        Long id = 1L;
+        Long id = Long.MAX_VALUE;
         String token = "token";
         Executable action = () -> memberSignupService.verify(id, token);
 
@@ -89,7 +89,7 @@ class MemberSignupServiceTest extends IntegrationTest {
         given(tempMember);
 
         Long id = tempMember.getId();
-        String token = "invalid";
+        String token = "INVALID";
         Executable action = () -> memberSignupService.verify(id, token);
 
         assertThrows(RequestException.class, action);

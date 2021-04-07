@@ -1,6 +1,5 @@
 package com.github.suloginscene.authserver.member.application;
 
-import com.github.suloginscene.authserver.config.AppProperties;
 import com.github.suloginscene.authserver.member.domain.Email;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.MemberRepository;
@@ -27,10 +26,8 @@ public class MemberSignupService {
     private final PasswordEncoder passwordEncoder;
     private final Mailer mailer;
 
-    private final AppProperties appProperties;
 
-
-    public void signup(Email email, Password password) {
+    public Long signup(Email email, Password password) {
         checkDuplicated(email);
         password = password.encoded(passwordEncoder);
 
@@ -39,6 +36,8 @@ public class MemberSignupService {
 
         MailMessage mail = verificationMail(saved);
         mailer.send(mail);
+
+        return saved.getId();
     }
 
     private void checkDuplicated(Email email) {
@@ -54,13 +53,8 @@ public class MemberSignupService {
         String recipient = tempMember.getEmail().get();
         String title = "[Scene] 회원가입 인증 메일";
 
-        String id = tempMember.getId().toString();
         String token = tempMember.getVerificationToken();
-        String queryString = "id=" + id + "&token=" + token;
-
-        String address = appProperties.getAddress();
-        String link = address + "/api/members/verify?" + queryString;
-        String content = "회원가입 인증 링크: " + link;
+        String content = "회원가입 인증 토큰: " + token;
 
         return new MailMessage(recipient, title, content);
     }

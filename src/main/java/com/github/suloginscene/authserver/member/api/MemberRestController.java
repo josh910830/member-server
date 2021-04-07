@@ -1,8 +1,10 @@
 package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.member.api.representation.MemberRepresentation;
+import com.github.suloginscene.authserver.member.api.representation.SignupRepresentation;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
 import com.github.suloginscene.authserver.member.application.MemberConfiguringService;
 import com.github.suloginscene.authserver.member.application.MemberFindingService;
 import com.github.suloginscene.authserver.member.application.MemberSignupService;
@@ -38,20 +40,25 @@ public class MemberRestController {
 
 
     @PostMapping
-    ResponseEntity<Void> signup(@RequestBody @Valid MemberSignupRequest request) {
+    ResponseEntity<SignupRepresentation> signup(@RequestBody @Valid MemberSignupRequest request) {
         Email email = new Email(request.getEmail());
         Password password = new Password(request.getPassword());
 
-        memberSignupService.signup(email, password);
+        Long id = memberSignupService.signup(email, password);
 
-        URI location = linkTo(this.getClass()).toUri();
-        return ResponseEntity.created(location).build();
+        SignupRepresentation representation = new SignupRepresentation(id);
+        return ResponseEntity.ok().body(representation);
     }
 
-    @GetMapping("/verify")
-    ResponseEntity<Void> verify(@RequestParam Long id, @RequestParam String token) {
+    @PostMapping("/verify")
+    ResponseEntity<Void> verify(@RequestBody @Valid MemberVerificationRequest request) {
+        Long id = request.getId();
+        String token = request.getToken();
+
         memberSignupService.verify(id, token);
-        return ResponseEntity.ok().build();
+
+        URI location = linkTo(this.getClass()).slash("my-info").toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/my-info")

@@ -3,6 +3,7 @@ package com.github.suloginscene.authserver;
 import com.github.suloginscene.authserver.jwt.api.request.JwtRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
 import com.github.suloginscene.jwt.JwtFactory;
 import com.github.suloginscene.mail.MailMessage;
 import com.github.suloginscene.mail.Mailer;
@@ -56,11 +57,13 @@ public class AcceptanceScenarioTest {
     String email = "test@email.com";
     String password = "password";
 
-    // 가입 후 발급받아 프런트엔드에 저장합니다.
-    String jwt;
 
     // 프런트엔드에서의 _links 참조에 해당합니다.
     Map<String, String> relPathMap = new HashMap<>();
+
+    // 이메일 인증을 위해 프런트엔드에 임시로 저장합니다.
+    Long id; // 가입 신청 응답 본문으로 받습니다.
+    String token; // 메일로 받습니다.
 
     // 메일을 담기 위한 임시 저장소입니다.
     ThreadLocal<MailMessage> tempMail = new ThreadLocal<>();
@@ -72,6 +75,9 @@ public class AcceptanceScenarioTest {
         invocation.callRealMethod();
         return null;
     };
+
+    // 가입 완료 후 발급받아 프런트엔드에 저장해두고 사용합니다.
+    String jwt;
 
 
     @Order(1)
@@ -94,7 +100,7 @@ public class AcceptanceScenarioTest {
 
     @Order(2)
     @Test
-    @DisplayName("가입 신청 - 201: 인증 메일 발송")
+    @DisplayName("가입 신청 - 200: 인증 메일 발송")
     void signup() throws Exception {
         doAnswer(proxiedVoid).when(mailer).send(any());
 
@@ -103,23 +109,30 @@ public class AcceptanceScenarioTest {
         MemberSignupRequest request = new MemberSignupRequest(email, password);
         ResultActions signup = mockMvc.perform(ofPost(url).json(request).build());
 
-        signup.andExpect(status().isCreated());
+        MvcResult result = signup.andExpect(status().isOk()).andReturn();
+
+        setRelPathMap(result);
+        assertThat(relPathMap.get("verify")).isEqualTo("/api/members/verify");
 
         then(mailer).should().send(any());
         assertThat(tempMail.get().getRecipient()).isEqualTo(email);
         assertThat(tempMail.get().getTitle()).isEqualTo("[Scene] 회원가입 인증 메일");
-        assertThat(tempMail.get().getContent()).startsWith("회원가입 인증 링크: ");
+        assertThat(tempMail.get().getContent()).startsWith("회원가입 인증 토큰: ");
+
+        id = Long.parseLong(toResponseAsJsonMap(result).get("id").toString());
+        token = tempMail.get().getContent().split(": ")[1];
     }
 
     @Order(3)
     @Test
-    @DisplayName("메일 인증 - 200")
+    @DisplayName("메일 인증 - 201")
     void verify() throws Exception {
-        String url = parsePathFromRoot(tempMail.get().getContent().split(": ")[1]);
+        String url = relPathMap.get("verify");
 
-        ResultActions verify = mockMvc.perform(ofGet(url).build());
+        MemberVerificationRequest request = new MemberVerificationRequest(id, token);
+        ResultActions verify = mockMvc.perform(ofPost(url).json(request).build());
 
-        verify.andExpect(status().isOk());
+        verify.andExpect(status().isCreated());
     }
 
     @Order(4)

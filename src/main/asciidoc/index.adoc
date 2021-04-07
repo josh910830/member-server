@@ -15,7 +15,7 @@
 === HTTP 동사
 
 |===
-| `GET` | 조회, 링크 인증, 비밀번호 분실 처리
+| `GET` | 조회
 | `POST` | 생성 또는 JWT 발급
 | `PUT` | 수정
 | `DELETE` | 삭제
@@ -25,7 +25,7 @@
 === HTTP 상태 코드
 
 |===
-| `200 OK` | GET 성공
+| `200 OK` | GET 성공 또는 임시생성(가입신청) 성공
 | `201 Created` | POST 성공
 | `204 Not Found` | PUT & DELETE 성공
 | `400 Bad Request` | 입력 값 또는 리소스 상태 이상
@@ -72,11 +72,11 @@
 === 지도
 
 |===
-| 인덱스 -> | 회원 가입 (-> 인증 메일) +
+| 인덱스 -> | 가입 신청 (-> 인증 메일) +
 JWT 발급 +
 내 정보 +
 비밀번호 분실 처리 (-> 메일)
-| (인증 메일 ->) | 이메일 인증
+| 가입 신청 -> | 이메일 인증
 | 내 정보 -> | 비밀번호 변경 +
 회원 탈퇴
 |===
@@ -98,7 +98,7 @@ operation::index[snippets='http-request,http-response']
 === 회원
 
 [[representation-member-signup]]
-==== 회원 가입
+==== 가입 신청
 
 operation::signup[snippets='http-request,http-response']
 

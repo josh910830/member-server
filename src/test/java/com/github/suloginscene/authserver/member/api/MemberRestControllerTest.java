@@ -2,6 +2,7 @@ package com.github.suloginscene.authserver.member.api;
 
 import com.github.suloginscene.authserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.authserver.member.api.request.MemberSignupRequest;
+import com.github.suloginscene.authserver.member.api.request.MemberVerificationRequest;
 import com.github.suloginscene.authserver.member.domain.Member;
 import com.github.suloginscene.authserver.member.domain.temp.TempMember;
 import com.github.suloginscene.authserver.testing.base.ControllerTest;
@@ -18,6 +19,7 @@ import static com.github.suloginscene.test.RequestBuilder.ofPost;
 import static com.github.suloginscene.test.RequestBuilder.ofPut;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,13 +31,15 @@ class MemberRestControllerTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("회원가입 성공 - 201")
-    void signup_onSuccess_returns201() throws Exception {
+    @DisplayName("회원가입 성공 - 200")
+    void signup_onSuccess_returns200() throws Exception {
         MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
         ResultActions when = mockMvc.perform(
                 ofPost(URL).json(request).build());
 
-        ResultActions then = when.andExpect(status().isCreated());
+        ResultActions then = when.andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.verify").exists());
 
         then.andDo(document("signup"));
     }
@@ -95,27 +99,28 @@ class MemberRestControllerTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("인증 - 200")
-    void verify_onSuccess_returns200() throws Exception {
+    @DisplayName("인증 - 201")
+    void verify_onSuccess_returns201() throws Exception {
         TempMember tempMember = TestingMembers.temp();
         given(tempMember);
 
         Long id = tempMember.getId();
         String token = tempMember.getVerificationToken();
-        String queryString = "id=" + id + "&token=" + token;
+        MemberVerificationRequest request = new MemberVerificationRequest(id, token);
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/verify?" + queryString).build());
+                ofPost(URL + "/verify").json(request).build());
 
-        ResultActions then = when.andExpect(status().isOk());
+        ResultActions then = when.andExpect(status().isCreated())
+                .andExpect(header().exists("location"));
 
         then.andDo(document("verify"));
     }
 
     @Test
-    @DisplayName("인증(쿼리스트링 없음) - 400")
+    @DisplayName("인증(요청 본문 없음) - 400")
     void verify_withNoQueryString_returns400() throws Exception {
         ResultActions when = mockMvc.perform(
-                ofGet(URL + "/verify").build());
+                ofPost(URL + "/verify").build());
 
         when.andExpect(status().isBadRequest());
     }
