@@ -11,7 +11,6 @@ import lombok.ToString;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.UUID;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -37,7 +36,7 @@ public class TempMember {
     public TempMember(Email email, Password password) {
         this.email = email;
         this.password = password;
-        verificationToken = UUID.randomUUID().toString();
+        verificationToken = VerificationTokenGenerator.generate();
     }
 
 
