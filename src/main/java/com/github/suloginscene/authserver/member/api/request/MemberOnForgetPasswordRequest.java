@@ -17,6 +17,6 @@ public class MemberOnForgetPasswordRequest {
     @NotNull
     @Email
     @Getter
-    private String email;
+    private String username;
 
 }

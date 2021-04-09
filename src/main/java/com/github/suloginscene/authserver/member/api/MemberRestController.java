@@ -41,7 +41,7 @@ public class MemberRestController {
 
     @PostMapping
     ResponseEntity<SignupRepresentation> signup(@RequestBody @Valid MemberSignupRequest request) {
-        Email email = new Email(request.getEmail());
+        Email email = new Email(request.getUsername());
         Password password = new Password(request.getPassword());
 
         Long id = memberSignupService.signup(email, password);
@@ -71,7 +71,7 @@ public class MemberRestController {
 
     @PostMapping("/on-forget-password")
     ResponseEntity<Void> onForgetPassword(@RequestBody @Valid MemberOnForgetPasswordRequest request) {
-        Email target = new Email(request.getEmail());
+        Email target = new Email(request.getUsername());
 
         memberConfiguringService.onForgetPassword(target);
 

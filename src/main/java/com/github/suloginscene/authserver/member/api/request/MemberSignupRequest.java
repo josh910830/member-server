@@ -12,7 +12,7 @@ public class MemberSignupRequest {
 
     @NotNull
     @Email
-    private final String email;
+    private final String username;
 
     @NotNull
     @Size(min = 8)
