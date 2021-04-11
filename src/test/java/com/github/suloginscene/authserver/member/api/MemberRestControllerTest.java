@@ -39,7 +39,6 @@ class MemberRestControllerTest extends ControllerTest {
                 ofPost(URL).json(request).build());
 
         ResultActions then = when.andExpect(status().isOk())
-                .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("_links.verify").exists());
 
         then.andDo(document("signup"));
@@ -107,9 +106,9 @@ class MemberRestControllerTest extends ControllerTest {
 
         Long id = tempMember.getId();
         String token = tempMember.getVerificationToken();
-        MemberVerificationRequest request = new MemberVerificationRequest(id, token);
+        MemberVerificationRequest request = new MemberVerificationRequest(token);
         ResultActions when = mockMvc.perform(
-                ofPost(URL + "/verify").json(request).build());
+                ofPost(URL + "/verify/" + id).json(request).build());
 
         ResultActions then = when.andExpect(status().isCreated())
                 .andExpect(header().exists("location"));
@@ -119,9 +118,28 @@ class MemberRestControllerTest extends ControllerTest {
 
     @Test
     @DisplayName("인증(요청 본문 없음) - 400")
-    void verify_withNoQueryString_returns400() throws Exception {
+    void verify_withNoRequestBody_returns400() throws Exception {
+        TempMember tempMember = TestingMembers.temp();
+        given(tempMember);
+
+        Long id = tempMember.getId();
         ResultActions when = mockMvc.perform(
-                ofPost(URL + "/verify").build());
+                ofPost(URL + "/verify/" + id).build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("인증(잘못된 토큰) - 400")
+    void verify_withInvalidToken_returns400() throws Exception {
+        TempMember tempMember = TestingMembers.temp();
+        given(tempMember);
+
+        Long id = tempMember.getId();
+        String token = "INVALID";
+        MemberVerificationRequest request = new MemberVerificationRequest(token);
+        ResultActions when = mockMvc.perform(
+                ofPost(URL + "/verify/" + id).json(request).build());
 
         when.andExpect(status().isBadRequest());
     }

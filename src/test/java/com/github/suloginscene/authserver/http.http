@@ -7,12 +7,17 @@ POST localhost:8080/api/members
 Content-Type: application/json
 
 {
-  "email": "test@email.com",
+  "username": "test@email.com",
   "password": "password"
 }
 
 ### verify
-GET localhost:8080/api/members/verify?id=1&token=ab671185-1993-4938-bcb9-caea6eae69a1
+POST localhost:8080/api/members/verify/1
+Content-Type: application/json
+
+{
+  "token": "PNUZAD"
+}
 
 ### issue jwt
 POST localhost:8080/jwt

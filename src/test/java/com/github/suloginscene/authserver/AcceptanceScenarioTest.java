@@ -62,10 +62,6 @@ public class AcceptanceScenarioTest {
     // 프런트엔드에서의 _links 참조에 해당합니다.
     Map<String, String> relPathMap = new HashMap<>();
 
-    // 이메일 인증을 위해 프런트엔드에 임시로 저장합니다.
-    Long id; // 가입 신청 응답 본문으로 받습니다.
-    String token; // 메일로 받습니다.
-
     // 메일을 담기 위한 임시 저장소입니다.
     ThreadLocal<MailMessage> tempMail = new ThreadLocal<>();
 
@@ -113,15 +109,12 @@ public class AcceptanceScenarioTest {
         MvcResult result = signup.andExpect(status().isOk()).andReturn();
 
         setRelPathMap(result);
-        assertThat(relPathMap.get("verify")).isEqualTo("/api/members/verify");
+        assertThat(relPathMap.get("verify")).startsWith("/api/members/verify/");
 
         then(mailer).should().send(any());
         assertThat(tempMail.get().getRecipient()).isEqualTo(email);
         assertThat(tempMail.get().getTitle()).isEqualTo("[Scene] 회원가입 인증 메일");
         assertThat(tempMail.get().getContent()).startsWith("회원가입 인증 토큰: ");
-
-        id = Long.parseLong(toResponseAsJsonMap(result).get("id").toString());
-        token = tempMail.get().getContent().split(": ")[1];
     }
 
     @Order(3)
@@ -130,7 +123,8 @@ public class AcceptanceScenarioTest {
     void verify() throws Exception {
         String url = relPathMap.get("verify");
 
-        MemberVerificationRequest request = new MemberVerificationRequest(id, token);
+        String token = tempMail.get().getContent().split(": ")[1];
+        MemberVerificationRequest request = new MemberVerificationRequest(token);
         ResultActions verify = mockMvc.perform(ofPost(url).json(request).build());
 
         verify.andExpect(status().isCreated());

@@ -11,13 +11,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Data @EqualsAndHashCode(callSuper = false)
 public class SignupRepresentation extends RepresentationModel<SignupRepresentation> {
 
-    private final Long id;
-
-
     public SignupRepresentation(Long id) {
-        this.id = id;
-
-        add(linkTo(MemberRestController.class).slash("verify").withRel("verify"));
+        add(linkTo(MemberRestController.class).slash("verify").slash(id).withRel("verify"));
     }
 
 }

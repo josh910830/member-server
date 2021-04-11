@@ -1,17 +1,20 @@
 package com.github.suloginscene.authserver.member.api.request;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 
 
-@Data
+@EqualsAndHashCode @ToString
+@NoArgsConstructor @AllArgsConstructor
 public class MemberVerificationRequest {
 
     @NotNull
-    private final Long id;
-
-    @NotNull
-    private final String token;
+    @Getter
+    private String token;
 
 }
