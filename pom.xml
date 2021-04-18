@@ -13,7 +13,7 @@
 
     <groupId>com.github.suloginscene</groupId>
     <artifactId>auth-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>auth-server</name>
     <description>Auth server</description>
 
