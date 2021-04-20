@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.github.suloginscene</groupId>
-    <artifactId>auth-server</artifactId>
+    <artifactId>member-server</artifactId>
     <version>0.0.1</version>
-    <name>auth-server</name>
-    <description>Auth server</description>
+    <name>member-server</name>
+    <description>Member server</description>
 
     <properties>
         <java.version>11</java.version>

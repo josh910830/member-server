@@ -13,7 +13,7 @@ before_install:
   - git clone https://github.com/suloginscene/common.git ../common
   - cd ../common
   - mvn install
-  - cd ../auth-server
+  - cd ../member-server
 
 notifications:
   email:
