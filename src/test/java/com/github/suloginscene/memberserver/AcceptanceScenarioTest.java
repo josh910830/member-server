@@ -1,13 +1,13 @@
 package com.github.suloginscene.memberserver;
 
+import com.github.suloginscene.jwt.JwtFactory;
+import com.github.suloginscene.mail.MailMessage;
+import com.github.suloginscene.mail.Mailer;
 import com.github.suloginscene.memberserver.jwt.api.request.JwtRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberOnForgetPasswordRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberSignupRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberVerificationRequest;
-import com.github.suloginscene.jwt.JwtFactory;
-import com.github.suloginscene.mail.MailMessage;
-import com.github.suloginscene.mail.Mailer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

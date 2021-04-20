@@ -14,6 +14,7 @@ import com.github.suloginscene.memberserver.member.domain.Email;
 import com.github.suloginscene.memberserver.member.domain.Password;
 import com.github.suloginscene.security.Authenticated;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,13 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.net.URI;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static com.github.suloginscene.string.HrefAssembleUtil.href;
 
 
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberRestController {
+
+    public static final String PATH = "/api/members";
 
     private final MemberSignupService memberSignupService;
     private final MemberFindingService memberFindingService;
@@ -58,7 +61,7 @@ public class MemberRestController {
 
         memberSignupService.verify(id, token);
 
-        URI location = linkTo(this.getClass()).slash("my-info").toUri();
+        URI location = Link.of(href(PATH + "/my-info")).toUri();
         return ResponseEntity.created(location).build();
     }
 

@@ -1,10 +1,10 @@
 package com.github.suloginscene.memberserver.jwt.api;
 
+import com.github.suloginscene.jwt.JwtFactory;
 import com.github.suloginscene.memberserver.jwt.api.request.JwtRequest;
 import com.github.suloginscene.memberserver.member.application.MemberIdentifyingService;
 import com.github.suloginscene.memberserver.member.domain.Email;
 import com.github.suloginscene.memberserver.member.domain.Password;
-import com.github.suloginscene.jwt.JwtFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +19,8 @@ import javax.validation.Valid;
 @RequestMapping("/jwt")
 @RequiredArgsConstructor
 public class JwtRestController {
+
+    public static final String PATH = "/jwt";
 
     private final MemberIdentifyingService memberIdentifyingService;
     private final JwtFactory jwtFactory;

@@ -4,9 +4,10 @@ import com.github.suloginscene.memberserver.member.api.MemberRestController;
 import com.github.suloginscene.memberserver.member.application.data.MemberData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static com.github.suloginscene.string.HrefAssembleUtil.href;
 
 
 @Data @EqualsAndHashCode(callSuper = false)
@@ -18,8 +19,8 @@ public class MemberRepresentation extends RepresentationModel<MemberRepresentati
     public MemberRepresentation(MemberData member) {
         email = member.getEmail();
 
-        add(linkTo(MemberRestController.class).withRel("changePassword"));
-        add(linkTo(MemberRestController.class).withRel("withdraw"));
+        add(Link.of(href(MemberRestController.PATH)).withRel("changePassword"));
+        add(Link.of(href(MemberRestController.PATH)).withRel("withdraw"));
     }
 
 }
