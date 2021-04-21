@@ -3,6 +3,7 @@ package com.github.suloginscene.memberserver.config;
 import com.github.suloginscene.jwt.JwtReader;
 import com.github.suloginscene.security.JwtSecurityFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +40,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web
                 .ignoring()
-                .mvcMatchers(GET, "/docs/index.html");
+                .mvcMatchers(GET, "/docs/index.html")
+                .mvcMatchers(GET, "/error")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override

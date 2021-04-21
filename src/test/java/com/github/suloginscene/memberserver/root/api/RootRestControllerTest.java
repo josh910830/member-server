@@ -33,4 +33,18 @@ class RootRestControllerTest extends ControllerTest {
         then.andDo(document("index"));
     }
 
+    @Test
+    @DisplayName("오류")
+    void error() throws Exception {
+        mockMvc.perform(ofGet("/error").build())
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("파비콘")
+    void favicon() throws Exception {
+        mockMvc.perform(ofGet("/favicon.ico").build())
+                .andExpect(status().isOk());
+    }
+
 }
