@@ -34,7 +34,10 @@ public class JwtRestController {
         return ResponseEntity.ok().body(new JwtResponse(tokenPair));
     }
 
-
-    // TODO refresh
+    @PostMapping("/renew")
+    ResponseEntity<JwtResponse> renewJwt(@RequestBody String refreshToken) {
+        TokenPair tokenPair = jwtService.renew(refreshToken);
+        return ResponseEntity.ok().body(new JwtResponse(tokenPair));
+    }
 
 }

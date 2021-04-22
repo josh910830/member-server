@@ -27,6 +27,7 @@ class RootRestControllerTest extends ControllerTest {
         ResultActions then = when.andExpect(status().isOk())
                 .andExpect(jsonPath("_links.signup").exists())
                 .andExpect(jsonPath("_links.issueJwt").exists())
+                .andExpect(jsonPath("_links.renewJwt").exists())
                 .andExpect(jsonPath("_links.myInfo").exists())
                 .andExpect(jsonPath("_links.onForgetPassword").exists());
 

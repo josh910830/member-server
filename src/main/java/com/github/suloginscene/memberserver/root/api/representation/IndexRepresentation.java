@@ -16,6 +16,7 @@ public class IndexRepresentation extends RepresentationModel<IndexRepresentation
     private IndexRepresentation() {
         add(Link.of(href(MemberRestController.PATH)).withRel("signup"));
         add(Link.of(href(JwtRestController.PATH)).withRel("issueJwt"));
+        add(Link.of(href(JwtRestController.PATH + "/renew")).withRel("renewJwt"));
         add(Link.of(href(MemberRestController.PATH + "/my-info")).withRel("myInfo"));
         add(Link.of(href(MemberRestController.PATH + "/on-forget-password")).withRel("onForgetPassword"));
     }

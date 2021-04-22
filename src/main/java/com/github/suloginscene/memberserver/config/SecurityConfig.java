@@ -60,6 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(POST, "/api/members/verify/*").permitAll()
                 .mvcMatchers(POST, "/api/members/on-forget-password").permitAll()
                 .mvcMatchers(POST, "/jwt").permitAll()
+                .mvcMatchers(POST, "/jwt/renew").permitAll()
                 .anyRequest().hasAuthority(MEMBER);
 
         http

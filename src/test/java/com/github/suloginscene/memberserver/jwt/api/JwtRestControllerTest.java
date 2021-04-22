@@ -1,6 +1,7 @@
 package com.github.suloginscene.memberserver.jwt.api;
 
 import com.github.suloginscene.jwt.JwtReader;
+import com.github.suloginscene.memberserver.jwt.domain.RefreshToken;
 import com.github.suloginscene.memberserver.member.domain.Member;
 import com.github.suloginscene.memberserver.testing.base.ControllerTest;
 import com.github.suloginscene.memberserver.testing.data.TestingMembers;
@@ -31,7 +32,7 @@ public class JwtRestControllerTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("정상 - access_token & refresh_token 발급")
+    @DisplayName("발급 - 200(access_token & refresh_token)")
     void issue_onSuccess_returnsAccessTokenAndRefreshToken() throws Exception {
         Member member = TestingMembers.create();
         given(member);
@@ -48,6 +49,62 @@ public class JwtRestControllerTest extends ControllerTest {
         then.andDo(document("issue-jwt"));
     }
 
+    @Test
+    @DisplayName("발급(이메일 null) - 400")
+    void issue_withNullEmail_returns400() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        JwtRequest request = new JwtRequest(null, RAW_PASSWORD_VALUE);
+        ResultActions when = mockMvc.perform(
+                ofPost(URL).json(request).build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("발급(비밀번호 null) - 400")
+    void issue_withNullPassword_returns400() throws Exception {
+        Member member = TestingMembers.create();
+        given(member);
+
+        JwtRequest request = new JwtRequest(EMAIL_VALUE, null);
+        ResultActions when = mockMvc.perform(
+                ofPost(URL).json(request).build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @DisplayName("갱신 - 200(access_token & refresh_token)")
+    void renew_onSuccess_returnsAccessTokenAndRefreshToken() throws Exception {
+        Long memberId = 1L;
+        int expDays = 1;
+        RefreshToken refreshToken = RefreshToken.of(memberId, expDays);
+        given(refreshToken);
+
+        ResultActions when = mockMvc.perform(
+                ofPost(URL + "/renew").body(refreshToken.getValue()).build());
+
+        ResultActions then = when.andExpect(status().isOk())
+                .andExpect(exists("access_token"))
+                .andExpect(exists("refresh_token"))
+                .andExpect(jwtAudienceIs(memberId));
+
+        then.andDo(document("renew-jwt"));
+    }
+
+    @Test
+    @DisplayName("갱신(리프레시토큰 null) - 400")
+    void renew_withNullRefreshToken_returnsAccessTokenAndRefreshToken() throws Exception {
+        ResultActions when = mockMvc.perform(
+                ofPost(URL + "/renew").build());
+
+        when.andExpect(status().isBadRequest());
+    }
+
+
     private ResultMatcher exists(String key) {
         return (result) -> {
             Map<String, Object> jsonMap = toResponseAsJsonMap(result);
@@ -62,33 +119,6 @@ public class JwtRestControllerTest extends ControllerTest {
             String actualAudience = jwtReader.getAudience(encodedJwt);
             assertThat(Long.parseLong(actualAudience)).isEqualTo(id);
         };
-    }
-
-
-    @Test
-    @DisplayName("이메일 null - 400")
-    void issue_withNullEmail_returns400() throws Exception {
-        Member member = TestingMembers.create();
-        given(member);
-
-        JwtRequest request = new JwtRequest(null, RAW_PASSWORD_VALUE);
-        ResultActions when = mockMvc.perform(
-                ofPost(URL).json(request).build());
-
-        when.andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("비밀번호 null - 400")
-    void issue_withNullPassword_returns400() throws Exception {
-        Member member = TestingMembers.create();
-        given(member);
-
-        JwtRequest request = new JwtRequest(EMAIL_VALUE, null);
-        ResultActions when = mockMvc.perform(
-                ofPost(URL).json(request).build());
-
-        when.andExpect(status().isBadRequest());
     }
 
 }
