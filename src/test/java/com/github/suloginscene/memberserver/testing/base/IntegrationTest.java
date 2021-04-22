@@ -1,5 +1,7 @@
 package com.github.suloginscene.memberserver.testing.base;
 
+import com.github.suloginscene.memberserver.jwt.application.RefreshTokenRepository;
+import com.github.suloginscene.memberserver.jwt.domain.RefreshToken;
 import com.github.suloginscene.memberserver.member.domain.Member;
 import com.github.suloginscene.memberserver.member.domain.MemberRepository;
 import com.github.suloginscene.memberserver.member.domain.temp.TempMember;
@@ -16,6 +18,7 @@ public abstract class IntegrationTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TempMemberRepository tempMemberRepository;
+    @Autowired RefreshTokenRepository refreshTokenRepository;
 
 
     protected void given(Member... members) {
@@ -30,6 +33,14 @@ public abstract class IntegrationTest {
         logAround("given", () -> {
             for (TempMember tempMember : tempMembers) {
                 tempMemberRepository.save(tempMember);
+            }
+        });
+    }
+
+    protected void given(RefreshToken... refreshTokens) {
+        logAround("given", () -> {
+            for (RefreshToken refreshToken : refreshTokens) {
+                refreshTokenRepository.save(refreshToken);
             }
         });
     }
@@ -50,6 +61,7 @@ public abstract class IntegrationTest {
         logAround("clear", () -> {
             memberRepository.deleteAll();
             tempMemberRepository.deleteAll();
+            refreshTokenRepository.deleteAll();
         });
     }
 
