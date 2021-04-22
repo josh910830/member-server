@@ -4,7 +4,6 @@ import com.github.suloginscene.memberserver.testing.base.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.github.suloginscene.test.RequestBuilder.ofGet;
@@ -19,20 +18,18 @@ public class CorsFilterTest extends ControllerTest {
 
     static final String URL = "/";
 
-    String jwt;
-
-    @Value("${jwt.urls}")
-    String urls;
-
     String validOrigin;
     String invalidOrigin;
+
+    String jwt;
+
 
     @BeforeEach
     void setup() {
         jwt = jwtFactory.create(1L);
 
-        validOrigin = urls.split(",")[0];
-        invalidOrigin = "http://invalid.com";
+        validOrigin = securityProperties.getOrigins().split(",")[0];
+        invalidOrigin = "https://invalid.com";
     }
 
 

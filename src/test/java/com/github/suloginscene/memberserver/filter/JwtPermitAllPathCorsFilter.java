@@ -5,7 +5,6 @@ import com.github.suloginscene.memberserver.testing.base.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.github.suloginscene.memberserver.testing.data.TestingMembers.EMAIL_VALUE;
@@ -19,15 +18,13 @@ public class JwtPermitAllPathCorsFilter extends ControllerTest {
 
     static final String URL = "/api/members";
 
-    @Value("${jwt.urls}")
-    String urls;
-
     String validOrigin;
     String invalidOrigin;
 
+
     @BeforeEach
     void setup() {
-        validOrigin = urls.split(",")[0];
+        validOrigin = securityProperties.getOrigins().split(",")[0];
         invalidOrigin = "https://invalid.com";
     }
 
