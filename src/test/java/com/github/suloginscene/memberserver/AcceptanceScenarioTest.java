@@ -3,7 +3,7 @@ package com.github.suloginscene.memberserver;
 import com.github.suloginscene.jwt.JwtFactory;
 import com.github.suloginscene.mail.MailMessage;
 import com.github.suloginscene.mail.Mailer;
-import com.github.suloginscene.memberserver.jwt.api.request.JwtRequest;
+import com.github.suloginscene.memberserver.jwt.api.JwtRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberOnForgetPasswordRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberPasswordChangeRequest;
 import com.github.suloginscene.memberserver.member.api.request.MemberSignupRequest;
@@ -163,10 +163,13 @@ public class AcceptanceScenarioTest {
 
         MvcResult result = issueJwt.andExpect(status().isOk()).andReturn();
 
-        String resultBody = result.getResponse().getContentAsString();
-        assertThat(resultBody).matches(".+\\..+\\..+");
+        Map<String, Object> jsonMap = toResponseAsJsonMap(result);
+        String accessToken = jsonMap.get("access_token").toString();
+        String refreshToken = jsonMap.get("refresh_token").toString();
+        assertThat(accessToken).matches(".+\\..+\\..+");
+        assertThat(refreshToken).isNotNull();
 
-        jwt = resultBody;
+        jwt = accessToken;
     }
 
 

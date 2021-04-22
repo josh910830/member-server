@@ -1,8 +1,7 @@
 package com.github.suloginscene.memberserver.jwt.api;
 
-import com.github.suloginscene.jwt.JwtFactory;
-import com.github.suloginscene.memberserver.jwt.api.request.JwtRequest;
-import com.github.suloginscene.memberserver.member.application.MemberIdentifyingService;
+import com.github.suloginscene.memberserver.jwt.application.JwtService;
+import com.github.suloginscene.memberserver.jwt.application.TokenPair;
 import com.github.suloginscene.memberserver.member.domain.Email;
 import com.github.suloginscene.memberserver.member.domain.Password;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +21,20 @@ public class JwtRestController {
 
     public static final String PATH = "/jwt";
 
-    private final MemberIdentifyingService memberIdentifyingService;
-    private final JwtFactory jwtFactory;
+    private final JwtService jwtService;
 
 
     @PostMapping
-    ResponseEntity<String> issueJwt(@RequestBody @Valid JwtRequest request) {
+    ResponseEntity<JwtResponse> issueJwt(@RequestBody @Valid JwtRequest request) {
         Email email = new Email(request.getUsername());
         Password password = new Password(request.getPassword());
 
-        Long id = memberIdentifyingService.identify(email, password);
-        String jwt = jwtFactory.create(id);
+        TokenPair tokenPair = jwtService.issue(email, password);
 
-        return ResponseEntity.ok().body(jwt);
+        return ResponseEntity.ok().body(new JwtResponse(tokenPair));
     }
+
+
+    // TODO refresh
 
 }
