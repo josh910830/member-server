@@ -40,8 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web
                 .ignoring()
-                .mvcMatchers(GET, "/docs/index.html")
-                .mvcMatchers(GET, "/error")
+                .mvcMatchers(GET, "/", "/error")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -56,11 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .mvcMatchers(GET, "/api").permitAll()
-                .mvcMatchers(POST, "/api/members").permitAll()
-                .mvcMatchers(POST, "/api/members/verify/*").permitAll()
+                .mvcMatchers(POST, "/api/members", "/api/members/verify/*").permitAll()
                 .mvcMatchers(POST, "/api/members/on-forget-password").permitAll()
-                .mvcMatchers(POST, "/jwt").permitAll()
-                .mvcMatchers(POST, "/jwt/renew").permitAll()
+                .mvcMatchers(POST, "/jwt", "/jwt/renew").permitAll()
                 .anyRequest().hasAuthority(MEMBER);
 
         http

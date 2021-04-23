@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("CORS 필터")
 public class CorsFilterTest extends ControllerTest {
 
-    static final String URL = "/";
+    static final String URL = "/404";
 
     String validOrigin;
     String invalidOrigin;
@@ -53,15 +53,6 @@ public class CorsFilterTest extends ControllerTest {
 
 
     @Test
-    @DisplayName("POST 동일출처 - 404")
-    void post_withoutOrigin_returns404() throws Exception {
-        ResultActions when = mockMvc.perform(
-                ofPost(URL).jwt(jwt).build());
-
-        when.andExpect(status().isNotFound());
-    }
-
-    @Test
     @DisplayName("POST 허용 - 404")
     void post_fromValidOrigin_returns404() throws Exception {
         ResultActions when = mockMvc.perform(
@@ -79,15 +70,6 @@ public class CorsFilterTest extends ControllerTest {
         when.andExpect(status().isForbidden());
     }
 
-
-    @Test
-    @DisplayName("GET 동일출처 - 404")
-    void get_withoutOrigin_returns404() throws Exception {
-        ResultActions when = mockMvc.perform(
-                ofGet(URL).jwt(jwt).build());
-
-        when.andExpect(status().isNotFound());
-    }
 
     @Test
     @DisplayName("GET 허용 - 404")

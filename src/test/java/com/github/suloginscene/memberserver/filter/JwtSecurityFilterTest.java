@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class JwtSecurityFilterTest {
 
-    static final String URL = "/";
+    static final String URL = "/404";
 
     @Autowired MockMvc mockMvc;
     @Autowired TestJwtFactory testJwtFactory;

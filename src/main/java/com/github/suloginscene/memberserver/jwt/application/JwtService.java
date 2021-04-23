@@ -24,6 +24,7 @@ public class JwtService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
 
+    // TODO clear expired jwt by cron
 
     public TokenPair issue(Email email, Password password) {
         Long memberId = memberIdentifyingService.identify(email, password);
