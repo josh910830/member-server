@@ -84,19 +84,6 @@ class MemberRestControllerTest extends ControllerTest {
         when.andExpect(status().isBadRequest());
     }
 
-    @Test
-    @DisplayName("회원가입 실패(이메일 중복) - 400")
-    void signup_onDuplicate_returns400() throws Exception {
-        Member member = TestingMembers.create();
-        given(member);
-
-        MemberSignupRequest request = new MemberSignupRequest(EMAIL_VALUE, RAW_PASSWORD_VALUE);
-        ResultActions when = mockMvc.perform(
-                ofPost(URL).json(request).build());
-
-        when.andExpect(status().isBadRequest());
-    }
-
 
     @Test
     @DisplayName("인증 - 201")
@@ -130,14 +117,13 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("인증(잘못된 토큰) - 400")
-    void verify_withInvalidToken_returns400() throws Exception {
+    @DisplayName("인증(토큰 null) - 400")
+    void verify_withNullToken_returns400() throws Exception {
         TempMember tempMember = TestingMembers.temp();
         given(tempMember);
 
         Long id = tempMember.getId();
-        String token = "INVALID";
-        MemberVerificationRequest request = new MemberVerificationRequest(token);
+        MemberVerificationRequest request = new MemberVerificationRequest(null);
         ResultActions when = mockMvc.perform(
                 ofPost(URL + "/verify/" + id).json(request).build());
 
@@ -181,7 +167,7 @@ class MemberRestControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("비밀번호 분실 처리(요 본문 없음) - 400")
+    @DisplayName("비밀번호 분실 처리(요청 본문 없음) - 400")
     void onForgetPassword_withNoQueryString_returns400() throws Exception {
         ResultActions when = mockMvc.perform(
                 ofPost(URL + "/on-forget-password").build());

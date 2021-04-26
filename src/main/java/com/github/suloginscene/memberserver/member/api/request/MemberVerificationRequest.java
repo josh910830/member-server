@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor @AllArgsConstructor
 public class MemberVerificationRequest {
 
-    @NotNull
+    @NotNull(message = "인증토큰을 입력하십시오.")
     @Getter
     private String token;
 

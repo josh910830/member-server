@@ -10,12 +10,12 @@ import javax.validation.constraints.Size;
 @Data
 public class MemberSignupRequest {
 
-    @NotNull
-    @Email
+    @NotNull(message = "사용자이름을 입력하십시오.")
+    @Email(message = "사용자이름은 이메일형식에 맞아야 합니다.")
     private final String username;
 
-    @NotNull
-    @Size(min = 8)
+    @NotNull(message = "비밀번호를 입력하십시오.")
+    @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.")
     private final String password;
 
 }

@@ -8,10 +8,10 @@ import javax.validation.constraints.NotNull;
 @Data
 public class JwtRequest {
 
-    @NotNull
+    @NotNull(message = "사용자이름을 입력하십시오.")
     private final String username;
 
-    @NotNull
+    @NotNull(message = "비밀번호를 입력하십시오.")
     private final String password;
 
 }
