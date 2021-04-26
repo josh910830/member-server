@@ -1,6 +1,5 @@
 package com.github.suloginscene.memberserver.member.domain;
 
-import com.github.suloginscene.exception.RequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -37,7 +36,7 @@ public class Member {
     public void checkPassword(Password rawPassword, PasswordEncoder passwordEncoder) {
         boolean matched = password.matches(rawPassword, passwordEncoder);
         if (!matched) {
-            throw new RequestException("password not matched for " + this);
+            throw new PasswordNotMatchedException(id);
         }
     }
 

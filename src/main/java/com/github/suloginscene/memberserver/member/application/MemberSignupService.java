@@ -1,14 +1,13 @@
 package com.github.suloginscene.memberserver.member.application;
 
+import com.github.suloginscene.mail.MailMessage;
+import com.github.suloginscene.mail.Mailer;
 import com.github.suloginscene.memberserver.member.domain.Email;
 import com.github.suloginscene.memberserver.member.domain.Member;
 import com.github.suloginscene.memberserver.member.domain.MemberRepository;
 import com.github.suloginscene.memberserver.member.domain.Password;
 import com.github.suloginscene.memberserver.member.domain.temp.TempMember;
 import com.github.suloginscene.memberserver.member.domain.temp.TempMemberRepository;
-import com.github.suloginscene.exception.RequestException;
-import com.github.suloginscene.mail.MailMessage;
-import com.github.suloginscene.mail.Mailer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,11 +40,8 @@ public class MemberSignupService {
     }
 
     private void checkDuplicated(Email email) {
-        if (memberRepository.existsByEmail(email)) {
-            throw new RequestException(email + " is already exists");
-        }
-        if (tempMemberRepository.existsByEmail(email)) {
-            throw new RequestException(email + " is already exists");
+        if (memberRepository.existsByEmail(email) || tempMemberRepository.existsByEmail(email)) {
+            throw new DuplicateEmailException(email);
         }
     }
 

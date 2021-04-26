@@ -1,6 +1,5 @@
 package com.github.suloginscene.memberserver.jwt.application;
 
-import com.github.suloginscene.exception.RequestException;
 import com.github.suloginscene.jwt.JwtFactory;
 import com.github.suloginscene.memberserver.jwt.domain.RefreshToken;
 import com.github.suloginscene.memberserver.member.application.MemberIdentifyingService;
@@ -53,13 +52,13 @@ public class JwtService {
 
     private RefreshToken findRefreshToken(String refreshTokenValue) {
         return refreshTokenRepository.findByValue(refreshTokenValue)
-                .orElseThrow(() -> new RequestException("non existent refresh token"));
+                .orElseThrow(() -> new RefreshTokenException("token not found"));
     }
 
     private void checkExpired(RefreshToken refreshToken) {
         if (refreshToken.isExpired()) {
             refreshTokenRepository.delete(refreshToken);
-            throw new RequestException("expired refresh token");
+            throw new RefreshTokenException("expired token of " + refreshToken.getMemberId());
         }
     }
 
