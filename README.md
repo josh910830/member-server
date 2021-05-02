@@ -1,13 +1,13 @@
 ## 회원 서버 [![Build Status](https://travis-ci.com/suloginscene/member-server.svg?branch=master)](https://travis-ci.com/suloginscene/member-server)
 
-API 서버 / 개인 / 2021. 3. / [웹사이트](https://scene.gq) [API문서](https://member.scene.gq)  
+API 서버 / 개인 / 2021. 3. / [웹사이트](https://scene-cho.com) [API문서](https://member.scene-cho.com)  
 자바, 스프링, JPA / 도커, ec2, nginx, https
 
 개인 서비스의 회원 서버입니다.   
 [웹 프론트엔드](https://github.com/suloginscene/web-frontend) 가 사용하며,
 [공통 컴포넌트](https://github.com/suloginscene/common) 에 의존하고 있습니다.
 
-서비스 내용에 관해서는 [웹사이트](https://scene.gq) 메인화면을, API에 관해서는 [API문서](https://member.scene.gq)를 참고해 주세요.
+서비스 내용에 관해서는 [웹사이트](https://scene-cho.com) 메인화면을, API에 관해서는 [API문서](https://member.scene-cho.com)를 참고해 주세요.
 
 ---
 
