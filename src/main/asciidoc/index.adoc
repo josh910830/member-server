@@ -134,3 +134,8 @@ operation::withdraw[snippets='http-request,http-response']
 ==== JWT 발급
 
 operation::issue-jwt[snippets='http-request,http-response']
+
+[[representation-jwt-renew]]
+==== JWT 갱신
+
+operation::renew-jwt[snippets='http-request,http-response']
