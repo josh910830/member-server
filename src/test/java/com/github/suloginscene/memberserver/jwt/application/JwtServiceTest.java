@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class JwtServiceTest extends IntegrationTest {
 
     @Autowired JwtService jwtService;
+    @Autowired RefreshTokenRepository refreshTokenRepository;
 
 
     @Test
@@ -99,6 +100,22 @@ class JwtServiceTest extends IntegrationTest {
         Executable action = () -> jwtService.renew(refreshTokenValue);
 
         assertThrows(RequestException.class, action);
+    }
+
+    @Test
+    @DisplayName("만료 리프레시토큰 삭제")
+    void removeExpiredRefreshTokens() {
+        RefreshToken exp1 = RefreshToken.of(1L, 0);
+        RefreshToken exp2 = RefreshToken.of(2L, 0);
+        RefreshToken exp3 = RefreshToken.of(3L, 0);
+        RefreshToken valid1 = RefreshToken.of(1L, 1);
+        RefreshToken valid2 = RefreshToken.of(2L, 1);
+        RefreshToken valid3 = RefreshToken.of(3L, 1);
+        given(exp1, exp2, exp3, valid1, valid2, valid3);
+
+        jwtService.removeExpiredRefreshTokens();
+
+        assertThat(refreshTokenRepository.count()).isEqualTo(3);
     }
 
 }

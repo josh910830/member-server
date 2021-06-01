@@ -7,9 +7,13 @@ import com.github.suloginscene.memberserver.member.domain.Email;
 import com.github.suloginscene.memberserver.member.domain.Password;
 import com.github.suloginscene.property.SecurityProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 
 @Service
@@ -23,7 +27,6 @@ public class JwtService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecurityProperties securityProperties;
 
-    // TODO clear expired jwt by cron
 
     public TokenPair issue(Email email, Password password) {
         Long memberId = memberIdentifyingService.identify(email, password);
@@ -60,6 +63,14 @@ public class JwtService {
             refreshTokenRepository.delete(refreshToken);
             throw new RefreshTokenException("expired token of " + refreshToken.getMemberId());
         }
+    }
+
+
+    @Scheduled(cron = "0 0 3 * * *")
+    public void removeExpiredRefreshTokens() {
+        List<RefreshToken> tokens = refreshTokenRepository.findAll();
+        List<RefreshToken> expired = tokens.stream().filter(RefreshToken::isExpired).collect(toList());
+        refreshTokenRepository.deleteInBatch(expired);
     }
 
 

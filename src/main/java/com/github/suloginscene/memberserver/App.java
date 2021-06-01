@@ -2,9 +2,11 @@ package com.github.suloginscene.memberserver;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication
+@EnableScheduling
 public class App {
 
     private static final String CONFIG_ROOT = "file:/app/member";

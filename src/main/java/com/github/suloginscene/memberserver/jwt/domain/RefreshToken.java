@@ -22,6 +22,7 @@ public class RefreshToken {
     @Getter
     private Long memberId;
 
+    // TODO index
     @Getter
     private String value;
 
