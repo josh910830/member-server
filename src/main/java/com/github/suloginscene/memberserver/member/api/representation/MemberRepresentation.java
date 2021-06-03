@@ -2,17 +2,16 @@ package com.github.suloginscene.memberserver.member.api.representation;
 
 import com.github.suloginscene.memberserver.member.api.MemberRestController;
 import com.github.suloginscene.memberserver.member.application.data.MemberData;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
 import static com.github.suloginscene.string.HrefAssembleUtil.href;
 
 
-@Data @EqualsAndHashCode(callSuper = false)
 public class MemberRepresentation extends RepresentationModel<MemberRepresentation> {
 
+    @Getter
     private final String email;
 
 

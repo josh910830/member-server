@@ -1,6 +1,11 @@
 package com.github.suloginscene.memberserver.member.domain.temp;
 
+import lombok.NoArgsConstructor;
 
+import static lombok.AccessLevel.PRIVATE;
+
+
+@NoArgsConstructor(access = PRIVATE)
 class VerificationTokenGenerator {
 
     private static final int TOKEN_LENGTH = 6;

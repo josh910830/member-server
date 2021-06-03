@@ -156,7 +156,7 @@
                 <version>0.8.7</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/github/suloginscene/memberserver/App</exclude>
+                        <exclude>com/github/suloginscene/memberserver/App.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -185,8 +185,7 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <!--TODO 1.00-->
-                                            <minimum>0.50</minimum>
+                                            <minimum>1.00</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
