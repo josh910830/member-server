@@ -1,4 +1,7 @@
-## 회원 서버 [![Build Status](https://travis-ci.com/suloginscene/member-server.svg?branch=master)](https://travis-ci.com/suloginscene/member-server)
+## 회원 서버
+
+[![Build Status](https://travis-ci.com/suloginscene/member-server.svg?branch=master)](https://travis-ci.com/suloginscene/member-server)
+[![Coverage Status](https://coveralls.io/repos/github/suloginscene/member-server/badge.svg?branch=master)](https://coveralls.io/github/suloginscene/member-server?branch=master)
 
 API 서버 / 개인 / 2021. 3. / [웹사이트](https://scene-cho.com) [API문서](https://member.scene-cho.com)  
 자바, 스프링, JPA / 도커, ec2, nginx, https
@@ -24,7 +27,7 @@ API 서버 / 개인 / 2021. 3. / [웹사이트](https://scene-cho.com) [API문�
   관리됩니다. JWT 탈취를 대비해 유효기간을 짧게 설정하였고, 사용자 편의를 위해서는 별도의 리프레시 토큰을 사용합니다.
 - 리프레시 토큰  
   유효한 리프레시 토큰으로 갱신 요청이 발생하는 경우, 해당 사용자의 새로운 JWT를 발급하고, 리프레시 토큰의 유효기간을 연장합니다. 리프레시 토큰 자체는 임의의 문자열에 불과하며 그에 해당하는 사용자 정보 및
-  유효기간은 서버에서만 접근 가능한 저장소에서 관리됩니다.
+  유효기간은 서버에서만 접근 가능한 저장소에서 관리됩니다. @Scheduled를 통해 매일 새벽 만료된 리프레시 토큰을 제거합니다.
 
 ---
 

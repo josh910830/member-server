@@ -1,6 +1,7 @@
 package com.github.suloginscene.memberserver.config;
 
 import com.github.suloginscene.jwt.JwtReader;
+import com.github.suloginscene.security.DefaultCorsConfigurationSource;
 import com.github.suloginscene.security.JwtSecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import static com.github.suloginscene.security.Authorities.MEMBER;
 import static org.springframework.http.HttpMethod.GET;
@@ -26,7 +26,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtReader jwtReader;
-    private final CorsConfigurationSource corsConfigurationSource;
+    private final DefaultCorsConfigurationSource corsConfigurationSource;
     private final AccessDeniedHandler accessDeniedHandler;
 
 

@@ -1,14 +1,14 @@
 package com.github.suloginscene.memberserver.member.application;
 
+import com.github.suloginscene.exception.NotFoundException;
+import com.github.suloginscene.exception.RequestException;
+import com.github.suloginscene.mail.Mailer;
 import com.github.suloginscene.memberserver.member.domain.Member;
 import com.github.suloginscene.memberserver.member.domain.MemberRepository;
 import com.github.suloginscene.memberserver.member.domain.temp.TempMember;
 import com.github.suloginscene.memberserver.member.domain.temp.TempMemberRepository;
 import com.github.suloginscene.memberserver.testing.base.IntegrationTest;
 import com.github.suloginscene.memberserver.testing.data.TestingMembers;
-import com.github.suloginscene.exception.NotFoundException;
-import com.github.suloginscene.exception.RequestException;
-import com.github.suloginscene.mail.Mailer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -44,6 +44,17 @@ class MemberSignupServiceTest extends IntegrationTest {
         then(passwordEncoder).should().encode(anyString());
         then(tempMemberRepository).should().save(any());
         then(mailer).should().send(any());
+    }
+
+    @Test
+    @DisplayName("가입신청(임시 이메일 중복) - 예외 발생")
+    void signup_onDuplicateTemp_throwsException() {
+        TempMember member = TestingMembers.temp();
+        given(member);
+
+        Executable action = () -> memberSignupService.signup(EMAIL, RAW_PASSWORD);
+
+        assertThrows(RequestException.class, action);
     }
 
     @Test

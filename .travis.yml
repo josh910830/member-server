@@ -15,6 +15,9 @@ before_install:
   - mvn install
   - cd ../member-server
 
+script:
+  - mvn clean test jacoco:report coveralls:report
+
 notifications:
   email:
     recipients:
